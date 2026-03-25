@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌</title>
+
+<style>
+body {
+    margin:0;
+    font-family:Arial;
+    background:#ffe6f0;
+}
+
+/* รูป */
+.full {
+    width:100%;
+    height:50vh;
+    object-fit:cover;
+}
+
+/* แชท */
+.chat-box {
+    height:60vh;
+    overflow-y:auto;
+    padding:10px;
+}
+
+.msg {
+    padding:10px;
+    margin:5px;
+    border-radius:10px;
+    max-width:70%;
+}
+
+.me { background:#ffb3d9; margin-left:auto; }
+.ai { background:#fff; }
+
+.input-box {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    display:flex;
+}
+
+input {
+    flex:1;
+    padding:15px;
+    border:none;
+    font-size:16px;
+}
+
+button {
+    padding:15px;
+    border:none;
+    background:#ff66aa;
+    color:white;
+}
+
+/* เครดิต */
+.credit {
+    position:fixed;
+    bottom:60px;
+    right:10px;
+    font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+<div class="credit">พัฒนาโดย ig:meth._15</div>
+
+<script>
+const name = "ที่รัก 💖";
+
+// ---------- หน้าแรก ----------
+function start(){
+    app.innerHTML = `
+        <h2 style="text-align:center">📩 มีจดหมายถึง ${name}</h2>
+        <img src="outside.jpg" class="full">
+        <div style="text-align:center">
+            <button onclick="openLetter()">เปิดจดหมาย</button>
+        </div>
+    `;
+}
+
+// ---------- เปิด ----------
+function openLetter(){
+    app.innerHTML = `
+        <h2 style="text-align:center">ขอโทษนะ ${name} 💗</h2>
+        <img src="inside.jpg" class="full">
+        <div style="text-align:center">
+            <button onclick="chat()">เริ่มคุย 💬</button>
+        </div>
+    `;
+}
+
+// ---------- แชท ----------
+function chat(){
+    document.body.innerHTML = `
+        <div class="chat-box" id="chat"></div>
+
+        <div class="input-box">
+            <input id="input" placeholder="พิมพ์ข้อความ...">
+            <button onclick="send()">ส่ง</button>
+        </div>
+
+        <div class="credit">พัฒนาโดย ig:meth._15</div>
+    `;
+
+    // 🎵 เพลง
+    let iframe=document.createElement("iframe");
+    iframe.src="https://www.youtube.com/embed/a_idHhd77es?autoplay=1&mute=1";
+    iframe.style.display="none";
+    document.body.appendChild(iframe);
+
+    addMsg("เราขอโทษนะ...", "ai");
+}
+
+// ---------- เพิ่มข้อความ ----------
+function addMsg(text,cls){
+    let div=document.createElement("div");
+    div.className="msg "+cls;
+    div.innerText=text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+// ---------- ส่ง ----------
+function send(){
+    let text=input.value;
+    if(!text) return;
+
+    addMsg(text,"me");
+    input.value="";
+
+    setTimeout(()=>{
+        addMsg(aiReply(text),"ai");
+    },500);
+}
+
+// ---------- AI ----------
+function aiReply(msg){
+    msg = msg.toLowerCase();
+
+    if(msg.includes("ไม่") || msg.includes("งอน"))
+        return "ง้อหน่อยได้ไหม 🥺";
+
+    if(msg.includes("รัก"))
+        return "รักเหมือนกัน 💖";
+
+    if(msg.includes("โอเค") || msg.includes("ได้"))
+        return "เย้! ดีใจมากเลย 😆";
+
+    if(msg.includes("ไม่ให้อภัย"))
+        return "งื้อออ ขออีกโอกาสนะ 😭";
+
+    return ["อย่าโกรธเลยนะ 😢","ขอโทษจริง ๆ นะ 💔","ง้ออยู่ 🥺"][Math.floor(Math.random()*3)];
+}
+
+// ---------- เริ่ม ----------
+start();
+</script>
+
+</body>
+</html>
