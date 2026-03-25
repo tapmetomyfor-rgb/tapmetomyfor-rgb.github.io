@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>💌</title>
+
+<style>
+body {
+    margin:0;
+    background:#ffe6f0;
+    font-family: Arial;
+    text-align:center;
+    overflow:hidden;
+}
+
+#app { margin-top:40px; }
+
+button {
+    padding:10px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.yes { background:#66ff99; }
+.no { background:#ff6666; position:absolute; }
+
+img {
+    width:220px;
+    border-radius:15px;
+    transition:0.3s;
+}
+img:hover { transform:scale(1.2); }
+
+.chat {
+    width:80%;
+    margin:20px auto;
+    text-align:left;
+}
+
+.msg {
+    padding:10px;
+    margin:5px;
+    border-radius:10px;
+    width:fit-content;
+    max-width:70%;
+}
+
+.me { background:#ffb3d9; margin-left:auto; }
+.ai { background:#fff; }
+
+.heart {
+    position:absolute;
+    font-size:20px;
+    animation:float 3s linear infinite;
+}
+@keyframes float {
+    from { transform:translateY(0); }
+    to { transform:translateY(-700px); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<script>
+// 🔥 ใส่ชื่อ
+const name = "ที่รัก 💖";
+
+// 🔥 รูป (ของคุณ)
+const outsideImg = "https://cdn.discordapp.com/attachments/1445058089777889392/1486048814686011402/IMG_20260311_230238_646.webp";
+const insideImg  = "https://cdn.discordapp.com/attachments/1445058089777889392/1486049430238138428/IMG_20260207_174601_375.webp";
+
+// ---------- หน้าแรก ----------
+function showStart(){
+    app.innerHTML = `
+        <h2>📩 มีจดหมายถึง ${name}</h2>
+        <img src="${outsideImg}">
+        <br><br>
+        <button onclick="openLetter()">เปิดจดหมาย</button>
+    `;
+}
+
+// ---------- เปิดจดหมาย ----------
+function openLetter(){
+    app.innerHTML = `
+        <h1>ขอโทษนะ ${name} 💗</h1>
+        <img src="${insideImg}">
+        <p>ให้อภัยเราได้ไหม 🥺</p>
+        <button class="yes" onclick="yesClick()">Yes 💖</button>
+    `;
+
+    // 🎯 ปุ่ม No หลายตัว
+    for(let i=0;i<6;i++){
+        let b=document.createElement("button");
+        b.innerText="No 😢";
+        b.className="no";
+        moveBtn(b);
+        b.onmouseover=()=>moveBtn(b);
+        b.onclick=()=>moveBtn(b);
+        document.body.appendChild(b);
+    }
+
+    document.onmousemove=moveAll;
+}
+
+// ---------- ปุ่มหนี ----------
+function moveBtn(btn){
+    btn.style.left=Math.random()*window.innerWidth+"px";
+    btn.style.top=Math.random()*window.innerHeight+"px";
+}
+
+function moveAll(){
+    document.querySelectorAll(".no").forEach(b=>{
+        moveBtn(b);
+    });
+}
+
+// ---------- YES ----------
+function yesClick(){
+    document.body.innerHTML=`<div class="chat" id="chat"></div>`;
+
+    // 🎵 เพลง
+    let iframe=document.createElement("iframe");
+    iframe.src="https://www.youtube.com/embed/a_idHhd77es?autoplay=1";
+    iframe.style.display="none";
+    document.body.appendChild(iframe);
+
+    startChat();
+    hearts();
+}
+
+// ---------- แชท ----------
+function addMsg(text,cls){
+    let div=document.createElement("div");
+    div.className="msg "+cls;
+    div.innerText=text;
+    chat.appendChild(div);
+}
+
+function typeMsg(text,cls,i=0){
+    let div=document.createElement("div");
+    div.className="msg "+cls;
+    chat.appendChild(div);
+
+    let interval=setInterval(()=>{
+        div.innerText=text.slice(0,i);
+        i++;
+        if(i>text.length) clearInterval(interval);
+    },50);
+}
+
+function startChat(){
+    setTimeout(()=>addMsg("เราขอโทษนะ...", "me"),500);
+    setTimeout(()=>typeMsg("อืมมม... 😐", "ai"),1500);
+    setTimeout(()=>addMsg("ง้อจริง ๆ นะ 🥺", "me"),3000);
+    setTimeout(()=>typeMsg("ก็...ยังงอนอยู่นะ 😤", "ai"),4500);
+    setTimeout(()=>addMsg("งั้นยอมทุกอย่างเลย 😭", "me"),6500);
+    setTimeout(()=>typeMsg("ก็ได้...ให้อภัยก็ได้ 💖", "ai"),8500);
+}
+
+// ---------- หัวใจ ----------
+function hearts(){
+    setInterval(()=>{
+        let h=document.createElement("div");
+        h.className="heart";
+        h.innerText="💖";
+        h.style.left=Math.random()*window.innerWidth+"px";
+        h.style.top=window.innerHeight+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),3000);
+    },100);
+}
+
+// ---------- start ----------
+showStart();
+</script>
+
+</body>
+</html>
