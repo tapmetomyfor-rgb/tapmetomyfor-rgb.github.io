@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>💌</title>
+
+<style>
+body {
+    margin:0;
+    background:#ffe6f0;
+    font-family: Arial;
+    text-align:center;
+    overflow:hidden;
+}
+
+#app { padding:20px; }
+
+h1 { font-size:28px; }
+h2 { font-size:22px; }
+
+button {
+    padding:15px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:15px;
+    margin:10px;
+}
+
+.yes { background:#66ff99; }
+.no { background:#ff6666; position:absolute; }
+
+img {
+    width:80%;
+    max-width:300px;
+    border-radius:15px;
+}
+
+/* 💖 แชท */
+.chat { width:95%; margin:auto; }
+
+.msg {
+    padding:12px;
+    margin:8px;
+    border-radius:12px;
+    max-width:80%;
+}
+
+.me { background:#ffb3d9; margin-left:auto; }
+.ai { background:#fff; }
+
+/* 💖 หัวใจ */
+.heart {
+    position:absolute;
+    font-size:24px;
+    animation:float 3s linear infinite;
+}
+@keyframes float {
+    from { transform:translateY(0); }
+    to { transform:translateY(-800px); }
+}
+
+/* 🔥 เครดิต */
+.credit {
+    position:fixed;
+    bottom:10px;
+    right:10px;
+    font-size:12px;
+    color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+<div class="credit">พัฒนาโดย ig:meth._15</div>
+
+<script>
+const name = "ที่รัก 💖";
+
+// ใช้รูปในเครื่อง
+const outsideImg = "outside.jpg";
+const insideImg  = "inside.jpg";
+
+// ---------- หน้าแรก ----------
+function showStart(){
+    app.innerHTML = `
+        <h2>📩 มีจดหมายถึง ${name}</h2>
+        <img src="${outsideImg}">
+        <br><br>
+        <button onclick="openLetter()">เปิดจดหมาย</button>
+    `;
+}
+
+// ---------- เปิด ----------
+function openLetter(){
+    app.innerHTML = `
+        <h1>ขอโทษนะ ${name} 💗</h1>
+        <img src="${insideImg}">
+        <p>ให้อภัยเราได้ไหม 🥺</p>
+        <button class="yes" onclick="yesClick()">Yes 💖</button>
+    `;
+
+    // 😈 No หลายตัว
+    for(let i=0;i<5;i++){
+        let b=document.createElement("button");
+        b.innerText="No 😢";
+        b.className="no";
+        moveBtn(b);
+        b.ontouchstart=()=>moveBtn(b);
+        b.onclick=()=>moveBtn(b);
+        document.body.appendChild(b);
+    }
+}
+
+// ---------- หนี ----------
+function moveBtn(btn){
+    btn.style.left=Math.random()*window.innerWidth+"px";
+    btn.style.top=Math.random()*window.innerHeight+"px";
+}
+
+// ---------- YES ----------
+function yesClick(){
+    document.body.innerHTML=`<div class="chat" id="chat"></div>
+    <div class="credit">พัฒนาโดย ig:meth._15</div>`;
+
+    // 🎵 เพลง
+    let iframe=document.createElement("iframe");
+    iframe.src="https://www.youtube.com/embed/a_idHhd77es?autoplay=1&mute=1";
+    iframe.style.display="none";
+    document.body.appendChild(iframe);
+
+    startChat();
+    hearts();
+}
+
+// ---------- แชท ----------
+function addMsg(text,cls){
+    let div=document.createElement("div");
+    div.className="msg "+cls;
+    div.innerText=text;
+    chat.appendChild(div);
+}
+
+function typeMsg(text,cls,i=0){
+    let div=document.createElement("div");
+    div.className="msg "+cls;
+    chat.appendChild(div);
+
+    let interval=setInterval(()=>{
+        div.innerText=text.slice(0,i);
+        i++;
+        if(i>text.length) clearInterval(interval);
+    },40);
+}
+
+function startChat(){
+    setTimeout(()=>addMsg("เราขอโทษนะ...", "me"),500);
+    setTimeout(()=>typeMsg("อืมม... 😐", "ai"),1500);
+    setTimeout(()=>addMsg("ง้อจริง ๆ นะ 🥺", "me"),3000);
+    setTimeout(()=>typeMsg("ก็ยังงอนอยู่นะ 😤", "ai"),4500);
+    setTimeout(()=>addMsg("ยอมทุกอย่างเลย 😭", "me"),6500);
+    setTimeout(()=>typeMsg("ก็ได้...ให้อภัยก็ได้ 💖", "ai"),8500);
+}
+
+// ---------- หัวใจ ----------
+function hearts(){
+    setInterval(()=>{
+        let h=document.createElement("div");
+        h.className="heart";
+        h.innerText="💖";
+        h.style.left=Math.random()*window.innerWidth+"px";
+        h.style.top=window.innerHeight+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),3000);
+    },120);
+}
+
+// ---------- start ----------
+showStart();
+</script>
+
+</body>
+  </html>
