@@ -1,174 +1,181 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💌</title>
+<title>RPS ULTRA</title>
+
+<link rel="manifest" href="manifest.json">
 
 <style>
-body { margin:0; font-family:Arial; background:#ffe6f0; }
-
-.full {
-    width:100%;
-    height:50vh;
-    object-fit:cover;
+body{
+  margin:0;
+  font-family:Arial;
+  background: radial-gradient(circle,#000,#020024);
+  color:#0ff;
+  text-align:center;
 }
 
-.chat-box {
-    height:65vh;
-    overflow-y:auto;
-    padding:10px;
+/* MENU */
+#menu{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
 
-.msg {
-    padding:10px;
-    margin:5px;
-    border-radius:10px;
-    max-width:70%;
+#game{ display:none; }
+
+button{
+  font-size:18px;
+  padding:10px 16px;
+  margin:5px;
+  border-radius:12px;
+  border:none;
+  background:#111;
+  color:#0ff;
+  box-shadow:0 0 10px #0ff;
 }
 
-.me { background:#ffb3d9; margin-left:auto; }
-.ai { background:#fff; }
-
-.input-box {
-    position:fixed;
-    bottom:0;
-    width:100%;
-    display:flex;
+/* hand 3D */
+#hand{
+  font-size:90px;
+  margin:20px;
+  transform:rotateY(0deg);
+  transition:0.6s;
 }
+.spin{ transform:rotateY(720deg); }
 
-input {
-    flex:1;
-    padding:15px;
-    border:none;
-}
-
-button {
-    padding:15px;
-    border:none;
-    background:#ff66aa;
-    color:white;
-}
-
-.credit {
-    position:fixed;
-    bottom:60px;
-    right:10px;
-    font-size:12px;
-}
 </style>
 </head>
 
 <body>
 
-<div id="app"></div>
-<div class="credit">พัฒนาโดย ig:meth._15</div>
+<div id="menu">
+  <h1>⚡ RPS ULTRA ⚡</h1>
+  <button onclick="startGame()">▶️ Start</button>
+  <button onclick="toggleSound()">🔊 เสียง</button>
+  <button onclick="installApp()">📱 ติดตั้ง</button>
+</div>
+
+<div id="game">
+  <h2 id="count">3</h2>
+  <div id="hand">❔</div>
+
+  <button onclick="pick('rock')">✊</button>
+  <button onclick="pick('paper')">✋</button>
+  <button onclick="pick('scissors')">✌️</button>
+</div>
+
+<audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+<audio id="boom" src="https://actions.google.com/sounds/v1/explosions/explosion.ogg"></audio>
 
 <script>
-const name = "ที่รัก 💖";
+let choice=null, ready=false, revealed=false;
+let soundOn=true;
 
-// ---------- หน้าแรก ----------
+// start
+function startGame(){
+  menu.style.display="none";
+  game.style.display="block";
+  start();
+}
+
+function toggleSound(){
+  soundOn=!soundOn;
+  alert(soundOn?"🔊 เปิดเสียง":"🔇 ปิดเสียง");
+}
+
+// game loop
 function start(){
-    app.innerHTML = `
-        <h2 style="text-align:center">📩 มีจดหมายถึง ${name}</h2>
-        <img src="outside.jpg" class="full">
-        <div style="text-align:center">
-            <button onclick="openLetter()">เปิดจดหมาย</button>
-        </div>
-    `;
-}
+  choice=null; ready=false; revealed=false;
 
-// ---------- เปิด ----------
-function openLetter(){
-    app.innerHTML = `
-        <h2 style="text-align:center">ขอโทษนะ ${name} 💗</h2>
-        <img src="inside.jpg" class="full">
-        <div style="text-align:center">
-            <button onclick="chat()">เริ่มคุย 💬</button>
-        </div>
-    `;
-}
+  let t=3;
+  const loop=setInterval(()=>{
+    count.innerText=t;
+    play("beep");
+    t--;
 
-// ---------- แชท ----------
-let mood = 0; // 😡 → 😳 → 💖
-
-function chat(){
-    document.body.innerHTML = `
-        <div class="chat-box" id="chat"></div>
-
-        <div class="input-box">
-            <input id="input" placeholder="พิมพ์ง้อ...">
-            <button onclick="send()">ส่ง</button>
-        </div>
-
-        <div class="credit">พัฒนาโดย ig:meth._15</div>
-    `;
-
-    // 🎵 เพลง
-    let iframe=document.createElement("iframe");
-    iframe.src="https://www.youtube.com/embed/a_idHhd77es?autoplay=1&mute=1";
-    iframe.style.display="none";
-    document.body.appendChild(iframe);
-
-    addMsg("ยังงอนอยู่นะ 😤", "ai");
-}
-
-// ---------- เพิ่มข้อความ ----------
-function addMsg(text,cls){
-    let div=document.createElement("div");
-    div.className="msg "+cls;
-    div.innerText=text;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-}
-
-// ---------- ส่ง ----------
-function send(){
-    let text=input.value;
-    if(!text) return;
-
-    addMsg(text,"me");
-    input.value="";
-
-    setTimeout(()=>{
-        let reply = aiReply(text);
-        addMsg(reply,"ai");
-    },500);
-}
-
-// ---------- AI ----------
-function aiReply(msg){
-    msg = msg.toLowerCase();
-
-    // 💔 งอน
-    if(mood === 0){
-        if(msg.includes("ขอโทษ") || msg.includes("ง้อ")){
-            mood = 1;
-            return "ก็...เริ่มดีขึ้นนิดนึง 😒";
-        }
-        return "ยังไม่หายงอน 😤";
+    if(t<0){
+      clearInterval(loop);
+      count.innerText="GO!";
+      ready=true;
     }
-
-    // 😳 ใจอ่อน
-    if(mood === 1){
-        if(msg.includes("รัก") || msg.includes("คิดถึง")){
-            mood = 2;
-            return "ก็...ใจอ่อนแล้วก็ได้ 💕";
-        }
-        return "ง้ออีกหน่อยสิ 🥺";
-    }
-
-    // 💖 ให้อภัย
-    if(mood === 2){
-        return ["โอเค หายงอนแล้ว 💖","รักเหมือนกันนะ 😳","ยอมแล้วก็ได้ 😆"]
-        [Math.floor(Math.random()*3)];
-    }
-
-    return "อืม...";
+  },1000);
 }
 
-// ---------- เริ่ม ----------
-start();
+function pick(c){
+  if(choice) return;
+  choice=c;
+}
+
+// 📲 เขย่าเบาๆติด
+let last=0;
+window.addEventListener("devicemotion",(e)=>{
+  if(!ready || revealed) return;
+
+  const a=e.accelerationIncludingGravity;
+  const total=Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z);
+  const now=Date.now();
+
+  if(total>10 && now-last>300){
+    last=now;
+    reveal();
+  }
+});
+
+// tap fallback
+document.body.addEventListener("click",()=>{
+  if(ready) reveal();
+});
+
+// reveal
+function reveal(){
+  if(revealed) return;
+  revealed=true;
+
+  hand.innerText=choice?emoji(choice):"❌";
+  hand.classList.add("spin");
+
+  play("boom");
+
+  setTimeout(()=>{
+    hand.classList.remove("spin");
+    start();
+  },3000);
+}
+
+function emoji(c){
+  return c==="rock"?"✊":c==="paper"?"✋":"✌️";
+}
+
+function play(id){
+  if(!soundOn) return;
+  const s=document.getElementById(id);
+  s.currentTime=0;
+  s.play();
+}
+
+// PWA install
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt",(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+});
+
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+  }else{
+    alert("เพิ่มไปหน้าจอหลักได้จาก browser");
+  }
+}
+
+// service worker
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
 </script>
 
 </body>
