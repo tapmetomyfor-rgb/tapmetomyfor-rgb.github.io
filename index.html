@@ -2,18 +2,14 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RPS ULTRA</title>
 
 <style>
-*{box-sizing:border-box}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{
-  margin:0;
   height:100vh;
-  background: radial-gradient(circle,#000,#020024);
-  font-family:sans-serif;
+  background:radial-gradient(circle at center,#021,#000);
   color:#0ff;
   display:flex;
   justify-content:center;
@@ -21,211 +17,159 @@ body{
   overflow:hidden;
 }
 
-/* APP */
-#app{
+/* หน้า */
+.screen{
+  position:absolute;
   width:100%;
   height:100%;
-  display:flex;
-  flex-direction:column;
+  display:none;
   justify-content:center;
   align-items:center;
-}
-
-/* MENU */
-#menu{
-  position:absolute;
-  inset:0;
-  display:flex;
   flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:black;
 }
 
-.hidden{display:none}
+.active{display:flex}
 
-h1{
-  font-size:32px;
-  text-shadow:0 0 10px #0ff;
-}
-
-#count{
-  font-size:70px;
+/* ปุ่ม */
+.btn{
   margin:10px;
-}
-
-/* HAND */
-#hand{
-  font-size:110px;
-  margin:20px;
-  transition:0.5s;
-}
-.spin{
-  transform:rotateY(720deg) scale(1.4);
-}
-
-/* BUTTON */
-.buttons{
-  display:flex;
-  gap:10px;
-}
-button{
-  font-size:16px;
-  padding:10px 14px;
+  padding:12px 25px;
+  border-radius:20px;
   border:none;
-  border-radius:12px;
-  background:#111;
+  font-size:18px;
   color:#0ff;
+  background:#111;
   box-shadow:0 0 10px #0ff;
 }
 
-/* PARTICLE */
-.particle{
-  position:absolute;
-  width:6px;
-  height:6px;
-  background:#0ff;
-  border-radius:50%;
-  animation:boom 1s linear forwards;
+/* title */
+.title{
+  font-size:32px;
+  margin-bottom:20px;
+  text-shadow:0 0 20px #0ff;
 }
-@keyframes boom{
-  to{
-    transform:translate(var(--x),var(--y));
-    opacity:0;
-  }
+
+/* game */
+#count{
+  font-size:80px;
+  margin-bottom:20px;
+}
+
+#result{
+  font-size:100px;
+}
+
+.choice{
+  font-size:30px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="menu">
-  <h1>⚡ RPS ULTRA ⚡</h1>
-  <button onclick="startGame()">▶️ Start</button>
-  <button onclick="toggleSound()">🔊 เสียง</button>
+<!-- MENU -->
+<div id="menu" class="screen active">
+  <div class="title">⚡ RPS ULTRA ⚡</div>
+  <button class="btn" onclick="startGame()">▶ Start</button>
+  <button class="btn" onclick="openSettings()">⚙ Settings</button>
 </div>
 
-<div id="app" class="hidden">
-  <div id="count">3</div>
-  <div id="hand">❔</div>
+<!-- SETTINGS -->
+<div id="settings" class="screen">
+  <div class="title">⚙ Settings</div>
 
-  <div class="buttons">
-    <button onclick="pick('rock')">✊</button>
-    <button onclick="pick('paper')">✋</button>
-    <button onclick="pick('scissors')">✌️</button>
+  <button class="btn" onclick="toggleSound()">🔊 Sound: <span id="soundText">ON</span></button>
+  <button class="btn" onclick="toggleVibrate()">📳 Vibrate: <span id="vibText">ON</span></button>
+  <button class="btn" onclick="toggleHide()">🕶 Hide: <span id="hideText">OFF</span></button>
+
+  <button class="btn" onclick="backMenu()">⬅ Back</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="screen">
+  <div id="count">3</div>
+  <div id="result">❔</div>
+
+  <div>
+    <button class="btn choice" onclick="choose('✊')">✊</button>
+    <button class="btn choice" onclick="choose('✋')">✋</button>
+    <button class="btn choice" onclick="choose('✌')">✌</button>
   </div>
 </div>
 
-<audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-<audio id="boom" src="https://actions.google.com/sounds/v1/explosions/explosion.ogg"></audio>
-
 <script>
-let choice=null, ready=false, revealed=false;
-let soundOn=true;
+let sound=true;
+let vibrate=true;
+let hide=false;
+let playerChoice=null;
+let revealed=false;
 
-const menu=document.getElementById("menu");
-const app=document.getElementById("app");
-const count=document.getElementById("count");
-const hand=document.getElementById("hand");
-
-// START
-function startGame(){
-  menu.classList.add("hidden");
-  app.classList.remove("hidden");
-  start();
+/* หน้า */
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
+function openSettings(){show("settings")}
+function backMenu(){show("menu")}
+
+/* toggle */
 function toggleSound(){
-  soundOn=!soundOn;
-  alert(soundOn?"🔊 เปิดเสียง":"🔇 ปิดเสียง");
+  sound=!sound;
+  document.getElementById("soundText").innerText=sound?"ON":"OFF";
 }
 
-// LOOP
-function start(){
-  choice=null;
-  ready=false;
+function toggleVibrate(){
+  vibrate=!vibrate;
+  document.getElementById("vibText").innerText=vibrate?"ON":"OFF";
+}
+
+function toggleHide(){
+  hide=!hide;
+  document.getElementById("hideText").innerText=hide?"ON":"OFF";
+}
+
+/* เกม */
+function startGame(){
+  show("game");
+  playerChoice=null;
   revealed=false;
-
-  let t=3;
-  const loop=setInterval(()=>{
-    count.innerText=t;
-    play("beep");
-    t--;
-
-    if(t<0){
-      clearInterval(loop);
-      count.innerText="GO!";
-      ready=true;
-    }
-  },1000);
+  document.getElementById("result").innerText="❔";
+  countdown(3);
 }
 
-// PICK
-function pick(c){
-  if(choice) return;
-  choice=c;
-}
+function countdown(n){
+  document.getElementById("count").innerText=n;
 
-// SHAKE (เบาๆก็ติด)
-let last=0;
-window.addEventListener("devicemotion",(e)=>{
-  if(!ready || revealed) return;
+  if(vibrate && navigator.vibrate) navigator.vibrate(100);
 
-  const a=e.accelerationIncludingGravity;
-  const total=Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z);
-  const now=Date.now();
-
-  if(total>7 && now-last>300){
-    last=now;
-    reveal();
+  if(n>0){
+    setTimeout(()=>countdown(n-1),1000);
+  }else{
+    setTimeout(()=>reveal(),500);
   }
-});
+}
 
-// TAP fallback
-document.body.addEventListener("click",()=>{
-  if(ready) reveal();
-});
+function choose(c){
+  playerChoice=c;
+}
 
-// REVEAL
 function reveal(){
   if(revealed) return;
   revealed=true;
 
-  hand.innerText = choice ? emoji(choice) : "❌";
-  hand.classList.add("spin");
+  let bot=["✊","✋","✌"][Math.floor(Math.random()*3)];
 
-  play("boom");
+  let result = playerChoice ? playerChoice : "💀";
 
-  // 📳 สั่น
-  navigator.vibrate && navigator.vibrate([100,50,100]);
+  document.getElementById("result").innerText = result;
 
-  // 🎆 particle เอฟเฟกต์
-  for(let i=0;i<25;i++){
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.left="50%";
-    p.style.top="50%";
-    p.style.setProperty("--x",(Math.random()*300-150)+"px");
-    p.style.setProperty("--y",(Math.random()*300-150)+"px");
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),1000);
+  if(hide){
+    document.getElementById("result").style.opacity=0;
+    setTimeout(()=>{document.getElementById("result").style.opacity=1},2000);
   }
 
-  setTimeout(()=>{
-    hand.classList.remove("spin");
-    start();
-  },2500);
-}
-
-function emoji(c){
-  return c==="rock"?"✊":c==="paper"?"✋":"✌️";
-}
-
-function play(id){
-  if(!soundOn) return;
-  const s=document.getElementById(id);
-  s.currentTime=0;
-  s.play();
+  if(vibrate && navigator.vibrate) navigator.vibrate([200,100,200]);
 }
 </script>
 
