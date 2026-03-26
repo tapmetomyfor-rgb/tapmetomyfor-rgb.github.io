@@ -1,52 +1,73 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>RPS ULTRA</title>
 
-<link rel="manifest" href="manifest.json">
-
 <style>
+*{box-sizing:border-box}
+
 body{
   margin:0;
-  font-family:Arial;
-  background: radial-gradient(circle,#000,#020024);
+  height:100vh;
+  background: radial-gradient(circle at center,#000,#020024);
+  font-family:sans-serif;
   color:#0ff;
-  text-align:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-/* MENU */
-#menu{
-  position:fixed;
-  inset:0;
+/* FULL SCREEN */
+#app{
+  width:100%;
+  height:100%;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
 }
 
-#game{ display:none; }
+/* TEXT */
+h1{font-size:32px;margin:10px}
+#count{font-size:60px}
 
+/* HAND */
+#hand{
+  font-size:100px;
+  margin:20px;
+  transition:0.5s;
+}
+.spin{ transform:rotateY(720deg) scale(1.3); }
+
+/* BUTTONS */
+.buttons{
+  display:flex;
+  gap:10px;
+}
 button{
-  font-size:18px;
-  padding:10px 16px;
-  margin:5px;
-  border-radius:12px;
+  font-size:16px;
+  padding:10px 14px;
   border:none;
+  border-radius:12px;
   background:#111;
   color:#0ff;
   box-shadow:0 0 10px #0ff;
 }
 
-/* hand 3D */
-#hand{
-  font-size:90px;
-  margin:20px;
-  transform:rotateY(0deg);
-  transition:0.6s;
+/* MENU */
+#menu{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#000;
 }
-.spin{ transform:rotateY(720deg); }
-
+.hidden{ display:none }
 </style>
 </head>
 
@@ -56,16 +77,17 @@ button{
   <h1>⚡ RPS ULTRA ⚡</h1>
   <button onclick="startGame()">▶️ Start</button>
   <button onclick="toggleSound()">🔊 เสียง</button>
-  <button onclick="installApp()">📱 ติดตั้ง</button>
 </div>
 
-<div id="game">
-  <h2 id="count">3</h2>
+<div id="app" class="hidden">
+  <div id="count">3</div>
   <div id="hand">❔</div>
 
-  <button onclick="pick('rock')">✊</button>
-  <button onclick="pick('paper')">✋</button>
-  <button onclick="pick('scissors')">✌️</button>
+  <div class="buttons">
+    <button onclick="pick('rock')">✊</button>
+    <button onclick="pick('paper')">✋</button>
+    <button onclick="pick('scissors')">✌️</button>
+  </div>
 </div>
 
 <audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
@@ -75,10 +97,15 @@ button{
 let choice=null, ready=false, revealed=false;
 let soundOn=true;
 
-// start
+const menu=document.getElementById("menu");
+const app=document.getElementById("app");
+const count=document.getElementById("count");
+const hand=document.getElementById("hand");
+
+// START
 function startGame(){
-  menu.style.display="none";
-  game.style.display="block";
+  menu.classList.add("hidden");
+  app.classList.remove("hidden");
   start();
 }
 
@@ -87,9 +114,11 @@ function toggleSound(){
   alert(soundOn?"🔊 เปิดเสียง":"🔇 ปิดเสียง");
 }
 
-// game loop
+// LOOP
 function start(){
-  choice=null; ready=false; revealed=false;
+  choice=null;
+  ready=false;
+  revealed=false;
 
   let t=3;
   const loop=setInterval(()=>{
@@ -105,12 +134,13 @@ function start(){
   },1000);
 }
 
+// PICK
 function pick(c){
   if(choice) return;
   choice=c;
 }
 
-// 📲 เขย่าเบาๆติด
+// SHAKE (ปรับให้ติดง่าย)
 let last=0;
 window.addEventListener("devicemotion",(e)=>{
   if(!ready || revealed) return;
@@ -119,31 +149,33 @@ window.addEventListener("devicemotion",(e)=>{
   const total=Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z);
   const now=Date.now();
 
-  if(total>10 && now-last>300){
+  if(total>8 && now-last>300){
     last=now;
     reveal();
   }
 });
 
-// tap fallback
+// TAP fallback
 document.body.addEventListener("click",()=>{
   if(ready) reveal();
 });
 
-// reveal
+// REVEAL
 function reveal(){
   if(revealed) return;
   revealed=true;
 
-  hand.innerText=choice?emoji(choice):"❌";
+  hand.innerText = choice ? emoji(choice) : "❌";
   hand.classList.add("spin");
 
   play("boom");
 
+  navigator.vibrate && navigator.vibrate([100,50,100]);
+
   setTimeout(()=>{
     hand.classList.remove("spin");
     start();
-  },3000);
+  },2500);
 }
 
 function emoji(c){
@@ -155,26 +187,6 @@ function play(id){
   const s=document.getElementById(id);
   s.currentTime=0;
   s.play();
-}
-
-// PWA install
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt",(e)=>{
-  e.preventDefault();
-  deferredPrompt=e;
-});
-
-function installApp(){
-  if(deferredPrompt){
-    deferredPrompt.prompt();
-  }else{
-    alert("เพิ่มไปหน้าจอหลักได้จาก browser");
-  }
-}
-
-// service worker
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js");
 }
 </script>
 
