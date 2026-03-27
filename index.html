@@ -3,115 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FINAL GOD MODE</title>
+<title>FINAL GOD MODE COMPLETE</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-
-:root{
---main:#0ff;
---bg:#000;
-}
-
-body{
-background:radial-gradient(circle at top,#021018,#000);
-color:var(--main);
-height:100vh;overflow:hidden;
-}
+:root{--main:#0ff}
+body{background:#000;color:var(--main);overflow:hidden}
 
 /* SCREEN */
-.screen{
-position:absolute;width:100%;height:100%;
-display:none;flex-direction:column;
-justify-content:center;align-items:center;
-animation:fade .4s;
-}
+.screen{position:absolute;width:100%;height:100%;display:none;flex-direction:column;justify-content:center;align-items:center}
 .active{display:flex}
-
-@keyframes fade{
-from{opacity:0;transform:scale(.9)}
-to{opacity:1;transform:scale(1)}
-}
 
 /* BUTTON */
 .btn{
-margin:10px;padding:18px;
-font-size:18px;
-border:none;border-radius:20px;
-width:80%;max-width:300px;
+padding:16px;margin:8px;font-size:16px;
+width:85%;max-width:320px;border:none;border-radius:20px;
 background:#000;color:var(--main);
 box-shadow:0 0 15px var(--main);
 }
 
-/* XO BOARD */
-#board{
-display:grid;
-grid-template-columns:repeat(3,90px);
-gap:10px;
-justify-content:center;
-margin-top:20px;
-}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:90%}
 
-.cell{
-width:90px;
-height:90px;
-font-size:35px;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#000;
-border-radius:15px;
-box-shadow:0 0 10px var(--main);
-}
+/* ITEM */
+.item{border:1px solid var(--main);padding:10px;border-radius:12px;text-align:center}
 
-/* CARD */
-.card{
-border:1px solid var(--main);
-padding:15px;margin:10px;
-border-radius:15px;
-width:80%;max-width:300px;
-text-align:center;
-}
+/* XO */
+#board{display:grid;grid-template-columns:repeat(3,80px);gap:10px}
+.cell{width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 0 10px var(--main)}
+
+/* SLOT */
+#slotRes{font-size:45px}
+
+/* REACTION */
+#reactionBox{width:200px;height:200px;background:red}
 
 /* PARTICLE */
-.p{
-position:absolute;width:5px;height:5px;
-background:var(--main);
-border-radius:50%;
-animation:boom .6s forwards;
-}
-@keyframes boom{
-to{transform:translate(var(--x),var(--y));opacity:0}
-}
+.p{position:absolute;width:5px;height:5px;background:var(--main);border-radius:50%;animation:boom .5s forwards}
+@keyframes boom{to{transform:translate(var(--x),var(--y));opacity:0}}
 
-.dev{
-position:absolute;bottom:10px;font-size:13px;
-}
+.dev{position:fixed;bottom:10px;width:100%;text-align:center}
+.dev a{color:#0ff}
 </style>
 </head>
 
 <body>
 
+<div id="moneyBox">💰100</div>
+
 <!-- MAIN -->
 <div id="main" class="screen active">
 <h2>FINAL GOD MODE</h2>
-<button class="btn" onclick="go('profile',event)">👤 PROFILE</button>
 <button class="btn" onclick="go('menu',event)">🎮 PLAY</button>
-<button class="btn" onclick="go('shop',event)">💰 SHOP</button>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="screen">
-<button class="btn" onclick="go('main',event)">⬅</button>
-<h3 id="pname"></h3>
-<div id="pmoney"></div>
-<div id="plevel"></div>
+<button class="btn" onclick="go('shop',event)">🛒 SHOP</button>
+<button class="btn" onclick="go('inv',event)">🎒 INVENTORY</button>
+<button class="btn" onclick="go('leader',event)">🏆 LEADER</button>
+<button class="btn" onclick="go('setting',event)">⚙️ SETTING</button>
 </div>
 
 <!-- MENU -->
 <div id="menu" class="screen">
 <button class="btn" onclick="go('main',event)">⬅</button>
-<button class="btn" onclick="go('xo',event)">❌⭕ XO</button>
+<button class="btn" onclick="go('xo',event)">XO</button>
+<button class="btn" onclick="go('slot',event)">SLOT</button>
+<button class="btn" onclick="go('bomb',event)">BOMB</button>
+<button class="btn" onclick="go('memory',event)">MEMORY</button>
+<button class="btn" onclick="go('reaction',event)">REACTION</button>
 </div>
 
 <!-- XO -->
@@ -121,162 +78,260 @@ position:absolute;bottom:10px;font-size:13px;
 <button class="btn" onclick="reset()">🔄 รีแมตช์</button>
 </div>
 
+<!-- SLOT -->
+<div id="slot" class="screen">
+<button class="btn" onclick="go('menu',event)">⬅</button>
+<div id="slotRes">❓❓❓</div>
+<button class="btn" onclick="spin()">SPIN</button>
+</div>
+
+<!-- BOMB -->
+<div id="bomb" class="screen">
+<button class="btn" onclick="go('menu',event)">⬅</button>
+<button class="btn" onclick="startBomb()">▶ START</button>
+<canvas id="game" width="300" height="400"></canvas>
+<div id="hpText">❤️ 3</div>
+</div>
+
+<!-- MEMORY -->
+<div id="memory" class="screen">
+<button class="btn" onclick="go('menu',event)">⬅</button>
+<div id="memoryGrid" class="grid"></div>
+</div>
+
+<!-- REACTION -->
+<div id="reaction" class="screen">
+<button class="btn" onclick="go('menu',event)">⬅</button>
+<div id="reactionBox"></div>
+<div id="reactionText">รอ...</div>
+</div>
+
 <!-- SHOP -->
 <div id="shop" class="screen">
 <button class="btn" onclick="go('main',event)">⬅</button>
-
-<div class="card">
-<h3>💙 BLUE</h3>
-<button class="btn" onclick="buy('blue',50)">ซื้อ 50</button>
-<button class="btn" onclick="preview('#00f')">ดู</button>
+<button class="btn" onclick="openBox()">🎁 Lootbox (100)</button>
+<div id="lootResult"></div>
+<div id="shopList"></div>
 </div>
 
-<div class="card">
-<h3>💚 GREEN</h3>
-<button class="btn" onclick="buy('green',80)">ซื้อ 80</button>
-<button class="btn" onclick="preview('#0f0')">ดู</button>
+<!-- INVENTORY -->
+<div id="inv" class="screen">
+<button class="btn" onclick="go('main',event)">⬅</button>
+<div id="invList" class="grid"></div>
 </div>
 
-<div class="card">
-<h3>💜 PURPLE</h3>
-<button class="btn" onclick="buy('purple',120)">ซื้อ 120</button>
-<button class="btn" onclick="preview('#f0f')">ดู</button>
+<!-- LEADER -->
+<div id="leader" class="screen">
+<button class="btn" onclick="go('main',event)">⬅</button>
+<div id="rankBox"></div>
 </div>
 
+<!-- SETTING -->
+<div id="setting" class="screen">
+<button class="btn" onclick="go('main',event)">⬅</button>
+<button class="btn" onclick="toggleFx()">FX: <span id="fxText"></span></button>
+<button class="btn" onclick="toggleVib()">VIB: <span id="vibText"></span></button>
 </div>
 
-<div class="dev">พัฒนาโดย meth._15</div>
+<div class="dev">
+👑 <a href="https://www.instagram.com/meth._15" target="_blank">meth._15</a>
+</div>
 
 <script>
 
 /* DATA */
 let data=JSON.parse(localStorage.data||"null")||{
-name:"PLAYER",
-money:100,
-xp:0,
-skins:["default"],
-current:"default"
+money:100,skins:["default"],current:"default",score:0
 }
 
 /* SAVE */
-function save(){localStorage.data=JSON.stringify(data);update()}
-
-/* UPDATE */
-function update(){
-pname.innerText="👤 "+data.name
-pmoney.innerText="💰 "+data.money
-plevel.innerText="Lv."+(Math.floor(data.xp/100)+1)
-
-if(data.current=="blue")setColor("#00f")
-if(data.current=="green")setColor("#0f0")
-if(data.current=="purple")setColor("#f0f")
+function save(){
+localStorage.data=JSON.stringify(data)
+moneyBox.innerText="💰"+data.money
+applySkin()
+renderShop()
+renderInv()
+renderLeader()
 }
 
-/* COLOR */
-function setColor(c){
-document.documentElement.style.setProperty('--main',c)
+/* SKINS */
+const skins=[
+{name:"default",color:"#0ff"},
+{name:"blue",color:"#00f"},
+{name:"green",color:"#0f0"},
+{name:"purple",color:"#f0f"},
+{name:"gold",color:"#ffd700"}
+]
+
+function applySkin(){
+let s=skins.find(x=>x.name==data.current)
+if(s)document.documentElement.style.setProperty('--main',s.color)
+}
+
+/* SHOP */
+function renderShop(){
+shopList.innerHTML=skins.map(s=>{
+let own=data.skins.includes(s.name)
+return `<div class="item">
+<h3 style="color:${s.color}">${s.name}</h3>
+<button class="btn" onclick="buy('${s.name}')">${own?"USE":"BUY"}</button>
+</div>`
+}).join("")
+}
+
+function buy(name){
+if(data.skins.includes(name)){data.current=name;save();return}
+data.money-=50
+data.skins.push(name)
+data.current=name
+save()
+}
+
+/* INVENTORY */
+function renderInv(){
+invList.innerHTML=data.skins.map(n=>{
+let s=skins.find(x=>x.name==n)
+return `<div class="item">
+<h3 style="color:${s.color}">${s.name}</h3>
+<button class="btn" onclick="equip('${n}')">EQUIP</button>
+</div>`
+}).join("")
+}
+function equip(n){data.current=n;save()}
+
+/* LOOTBOX */
+function openBox(){
+if(data.money<100)return alert("เงินไม่พอ")
+data.money-=100
+let r=skins[Math.random()*skins.length|0]
+if(data.skins.includes(r.name)){data.money+=30}
+else{data.skins.push(r.name);data.current=r.name}
+lootResult.innerText="ได้: "+r.name
+save()
+}
+
+/* LEADER */
+function renderLeader(){
+rankBox.innerText="Score: "+data.score
+}
+
+/* SETTING */
+let setting=JSON.parse(localStorage.setting||"null")||{fx:true,vib:true}
+function toggleFx(){setting.fx=!setting.fx;localStorage.setting=JSON.stringify(setting);updateSet()}
+function toggleVib(){setting.vib=!setting.vib;localStorage.setting=JSON.stringify(setting);updateSet()}
+function updateSet(){fxText.innerText=setting.fx?"ON":"OFF";vibText.innerText=setting.vib?"ON":"OFF"}
+
+/* PARTICLE */
+function boom(x,y){
+if(!setting.fx)return
+for(let i=0;i<10;i++){
+let d=document.createElement("div")
+d.className="p"
+d.style.left=x+"px";d.style.top=y+"px"
+d.style.setProperty('--x',(Math.random()*100-50)+"px")
+d.style.setProperty('--y',(Math.random()*100-50)+"px")
+document.body.appendChild(d)
+setTimeout(()=>d.remove(),500)
+}
+if(setting.vib&&navigator.vibrate)navigator.vibrate(20)
 }
 
 /* NAV */
 function go(id,e){
-if(e){boom(e.clientX,e.clientY)}
+if(e)boom(e.clientX||150,e.clientY||150)
 document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"))
 document.getElementById(id).classList.add("active")
-update()
-}
-
-/* PARTICLE */
-function boom(x,y){
-for(let i=0;i<20;i++){
-let d=document.createElement("div")
-d.className="p"
-d.style.left = x + "px"
-d.style.top = y + "px"
-d.style.setProperty('--x',(Math.random()*200-100)+"px")
-d.style.setProperty('--y',(Math.random()*200-100)+"px")
-document.body.appendChild(d)
-setTimeout(()=>d.remove(),600)
-}
-}
-
-/* SHOP */
-function buy(name,price){
-if(data.skins.includes(name)){
-data.current=name
-alert("ใช้สกินแล้ว")
-save()
-return
-}
-if(data.money<price)return alert("เงินไม่พอ")
-
-data.money-=price
-data.skins.push(name)
-data.current=name
-
-alert("ซื้อสำเร็จ!")
-save()
-}
-
-function preview(c){
-setColor(c)
 }
 
 /* XO */
 let b=["","","","","","","","",""]
-
 function draw(){
 board.innerHTML=""
 b.forEach((v,i)=>{
 let c=document.createElement("div")
 c.className="cell"
 c.innerText=v
-
-c.onclick=()=>{
-if(b[i])return
-b[i]="X"
-
-if(win("X")){
-alert("ชนะ")
-data.money+=20
-save()
-reset()
-return
-}
-
-ai()
-
-if(win("O")){
-alert("แพ้")
-data.money-=10
-save()
-reset()
-return
-}
-
-draw()
-}
-
+c.onclick=e=>{boom(e.clientX,e.clientY);if(!b[i]){b[i]="X";ai();draw()}}
 board.appendChild(c)
 })
 }
-
 function ai(){
 let e=b.map((v,i)=>v==""?i:null).filter(v=>v!=null)
 b[e[Math.random()*e.length|0]]="O"
 }
-
-function win(p){
-return [
-[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]
-].some(w=>w.every(i=>b[i]==p))
-}
-
 function reset(){b=["","","","","","","","",""];draw()}
 
+/* SLOT */
+function spin(){
+let a=["🍒","💎","⭐","7️⃣"]
+slotRes.innerText=a[Math.random()*4|0]+a[Math.random()*4|0]+a[Math.random()*4|0]
+data.money+=10
+save()
+}
+
+/* BOMB */
+let ctx=game.getContext("2d")
+let player={x:150,y:350,hp:3},bombs=[],playing=false
+game.addEventListener("mousemove",e=>{player.x=e.offsetX})
+game.addEventListener("touchmove",e=>{player.x=e.touches[0].clientX})
+function startBomb(){bombs=[];player.hp=3;playing=true}
+setInterval(()=>{if(playing)bombs.push({x:Math.random()*280,y:0})},600)
+function loop(){
+ctx.clearRect(0,0,300,400)
+ctx.fillStyle="yellow"
+ctx.fillRect(player.x-10,player.y,20,20)
+bombs.forEach((b,i)=>{
+b.y+=5
+ctx.beginPath();ctx.arc(b.x,b.y,8,0,6.28);ctx.fill()
+if(Math.abs(b.x-player.x)<15&&Math.abs(b.y-player.y)<20){
+boom(player.x,player.y)
+bombs.splice(i,1)
+player.hp--
+if(player.hp<=0){playing=false;alert("GAME OVER")}
+}
+})
+requestAnimationFrame(loop)
+}
+loop()
+
+/* MEMORY */
+let icons=["🍒","🍒","⭐","⭐","💎","💎","🍋","🍋"]
+function startMemory(){
+memoryGrid.innerHTML=""
+icons.sort(()=>Math.random()-0.5).forEach(v=>{
+let c=document.createElement("div")
+c.className="item"
+c.innerText="❓"
+c.onclick=()=>c.innerText=v
+memoryGrid.appendChild(c)
+})
+}
+startMemory()
+
+/* REACTION */
+let startTime=0
+reactionBox.onclick=()=>{
+if(reactionBox.style.background=="green"){
+reactionText.innerText=(Date.now()-startTime)+" ms"
+reactionBox.style.background="red"
+setTimeout(startReaction,1000)
+}
+}
+function startReaction(){
+setTimeout(()=>{
+reactionBox.style.background="green"
+startTime=Date.now()
+},Math.random()*3000+1000)
+}
+startReaction()
+
+/* INIT */
+updateSet()
+applySkin()
+renderShop()
+renderInv()
+renderLeader()
 draw()
-update()
 
 </script>
 
