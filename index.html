@@ -49,7 +49,6 @@ body {
   border-bottom: 75px solid #3399ff;
   transform-origin: top;
   transition: 0.5s;
-  z-index: 1;
 }
 
 .envelope.open .flap {
@@ -101,18 +100,31 @@ h1 { color: #3399ff; }
 .yes { background: #66b3ff; color: white; }
 .no { background: #ccc; }
 
-/* ✨ ข้อความใต้ปุ่ม */
+/* ✨ ข้อความใหญ่ */
 #result {
   opacity: 0;
   transform: translateY(10px);
   transition: 0.8s;
   color: #3399ff;
-  margin-top: 10px;
+  margin-top: 15px;
+  font-size: 22px; /* 👈 ใหญ่ขึ้น */
+  font-weight: 600;
 }
 
 #result.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* 💖 หัวใจ */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  animation: floatUp 3s linear forwards;
+}
+
+@keyframes floatUp {
+  100% { transform: translateY(-120vh); opacity:0; }
 }
 </style>
 </head>
@@ -137,12 +149,13 @@ h1 { color: #3399ff; }
     <button class="btn yes" id="yesBtn" onclick="yesClick()">มอนิ่งค่ะ</button>
     <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
 
-    <!-- ✨ ข้อความย้ายมาอยู่ใต้ปุ่ม -->
     <div id="result">ตื่นมาขอให้เป็นวันที่สดใสนะค้าบ 💙</div>
 
   </div>
 
 </div>
+
+<audio id="openSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
 
 <script>
 let noScale = 1;
@@ -151,20 +164,17 @@ let noCount = 0;
 function openLetter(){
   const env = document.getElementById("env");
 
-  // ซ่อนปุ่มเปิด
   document.getElementById("openBtn").style.display = "none";
+  document.getElementById("openSound").play();
 
-  // เด้งก่อน
   env.classList.add("bounce");
 
   setTimeout(()=>{
     env.classList.remove("bounce");
 
-    // ⏳ ดีเลก่อนเปิดจริง
     setTimeout(()=>{
       env.classList.add("open");
 
-      // ⏳ ดีเลอีกนิดก่อนโชว์จดหมาย
       setTimeout(()=>{
         document.getElementById("letter").style.display="block";
         env.style.display="none";
@@ -176,21 +186,34 @@ function openLetter(){
 }
 
 function yesClick(){
-  // ✨ แสดงข้อความ
+  // แสดงข้อความ
   document.getElementById("result").classList.add("show");
 
-  // ❌ ซ่อนปุ่มมอนิ่ง
+  // ❌ ซ่อนปุ่มทั้งคู่
   document.getElementById("yesBtn").style.display = "none";
+  document.getElementById("noBtn").style.display = "none";
+
+  // 💖 หัวใจลอย
+  for(let i=0;i<15;i++){
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerText="💙";
+    h.style.left=Math.random()*100+"vw";
+    h.style.fontSize=(16+Math.random()*20)+"px";
+
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),3000);
+  }
 }
 
 function noClick(){
   noCount++;
 
   noScale -= 0.2;
-  document.getElementById("noBtn").style.transform = `scale(${noScale})`;
+  document.getElementById("noBtn").style.transform=`scale(${noScale})`;
 
-  if(noCount >= 5){
-    document.getElementById("noBtn").style.display = "none";
+  if(noCount>=5){
+    document.getElementById("noBtn").style.display="none";
   }
 }
 </script>
