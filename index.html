@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>Morning Letter</title>
 
+<!-- ฟอนต์สวย -->
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
@@ -12,7 +15,7 @@ body {
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #cce7ff, #e6f2ff);
-  font-family: sans-serif;
+  font-family: 'Kanit', sans-serif;
   overflow: hidden;
 }
 
@@ -28,13 +31,22 @@ body {
   border-radius: 10px;
   margin: 0 auto 10px;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-weight: bold;
 }
 
+/* ✨ ข้อความหน้าซอง */
+.label {
+  position: absolute;
+  width: 100%;
+  top: 60%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  z-index: 2; /* สำคัญ! ให้อยู่บนฝา */
+}
+
+/* ฝาซอง */
 .flap {
   position: absolute;
   top: 0;
@@ -43,6 +55,7 @@ body {
   border-bottom: 75px solid #3399ff;
   transform-origin: top;
   transition: 0.5s;
+  z-index: 1;
 }
 
 .envelope.open .flap {
@@ -62,7 +75,7 @@ body {
   75% { transform: translateX(-5px); }
 }
 
-/* ปุ่มเปิด */
+/* ปุ่ม */
 .openBtn {
   padding: 10px 20px;
   border: none;
@@ -70,7 +83,6 @@ body {
   background: #3399ff;
   color: white;
   cursor: pointer;
-  font-size: 16px;
 }
 
 /* จดหมาย */
@@ -80,20 +92,19 @@ body {
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  text-align: center;
   display: none;
   margin-top: 20px;
 }
 
+/* ที่เหลือเหมือนเดิม */
 img {
   width: 100%;
   height: 200px;
   object-fit: cover;
   border-radius: 15px;
-  margin-bottom: 15px;
 }
 
-h1 { color: #3399ff; font-size: 20px; }
+h1 { color: #3399ff; }
 
 .btn {
   border: none;
@@ -106,35 +117,16 @@ h1 { color: #3399ff; font-size: 20px; }
 .yes { background: #66b3ff; color: white; }
 .no { background: #ccc; }
 
-/* ✨ fade ข้อความ */
 #result {
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.8s ease;
+  transition: 0.8s;
   color: #3399ff;
-  margin-top: 10px;
 }
 
 #result.show {
   opacity: 1;
   transform: translateY(0);
-}
-
-/* เอฟเฟกต์ */
-.float {
-  position: absolute;
-  animation: floatUp 2s forwards;
-}
-.pop {
-  position: absolute;
-  animation: explode 0.8s forwards;
-}
-
-@keyframes floatUp {
-  to { transform: translateY(-150px); opacity: 0; }
-}
-@keyframes explode {
-  to { transform: translate(var(--x), var(--y)); opacity: 0; }
 }
 </style>
 </head>
@@ -144,7 +136,8 @@ h1 { color: #3399ff; font-size: 20px; }
 <div class="container">
 
   <div class="envelope" id="env">
-    จดหมายถึงมะตาว 💌
+    <!-- ✨ ข้อความไม่โดนทับแล้ว -->
+    <div class="label">จดหมายถึงมะตาว 💌</div>
     <div class="flap"></div>
   </div>
 
@@ -156,10 +149,9 @@ h1 { color: #3399ff; font-size: 20px; }
 
     <h1>มอนิ่งนะค้าบ ☀️</h1>
 
-    <!-- ✨ ข้อความ fade -->
     <div id="result">ตื่นมาขอให้เป็นวันที่สดใสนะค้าบ 💙</div>
 
-    <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
+    <button class="btn yes" id="yesBtn" onclick="yesClick()">มอนิ่งค่ะ</button>
     <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
 
   </div>
@@ -167,83 +159,39 @@ h1 { color: #3399ff; font-size: 20px; }
 </div>
 
 <script>
-let yesScale = 1;
-let noScale = 1;
-let noCount = 0;
+let yesScale=1,noScale=1,noCount=0;
 
 function openLetter(){
-  const env = document.getElementById("env");
-
-  document.getElementById("openBtn").style.display = "none";
-
   env.classList.add("bounce","shake");
+  openBtn.style.display="none";
 
   setTimeout(()=>{
     env.classList.remove("bounce","shake");
     env.classList.add("open");
 
     setTimeout(()=>{
-      document.getElementById("letter").style.display="block";
+      letter.style.display="block";
       env.style.display="none";
     },400);
-
   },400);
 }
 
-function yesClick(e){
-  // ✨ แสดงแบบ fade
-  document.getElementById("result").classList.add("show");
+function yesClick(){
+  result.classList.add("show");
 
-  yesScale += 0.2;
-  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
-
-  for(let i=0;i<8;i++){
-    let el=document.createElement("div");
-    el.className="float";
-    el.innerText=Math.random()>0.5?"💙":"☀️";
-    el.style.left=Math.random()*300+"px";
-    el.style.top="150px";
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),2000);
-  }
-
-  createPop(e);
+  yesScale+=0.2;
+  yesBtn.style.transform=`scale(${yesScale})`;
 }
 
 function noClick(){
   noCount++;
+  noScale-=0.2;
+  noBtn.style.transform=`scale(${noScale})`;
 
-  noScale -= 0.2;
-  document.getElementById("noBtn").style.transform=`scale(${noScale})`;
+  yesScale+=0.25;
+  yesBtn.style.transform=`scale(${yesScale})`;
 
-  yesScale += 0.25;
-  document.getElementById("yesBtn").style.transform=`scale(${yesScale})`;
-
-  if(noCount>=5){
-    document.getElementById("noBtn").style.display="none";
-  }
-}
-
-function createPop(e){
-  const rect=e.target.getBoundingClientRect();
-
-  for(let i=0;i<10;i++){
-    let p=document.createElement("div");
-    p.className="pop";
-    p.innerText="💙";
-
-    let a=Math.random()*Math.PI*2;
-    let d=80+Math.random()*40;
-
-    p.style.setProperty("--x",Math.cos(a)*d+"px");
-    p.style.setProperty("--y",Math.sin(a)*d+"px");
-
-    p.style.left=rect.left+"px";
-    p.style.top=rect.top+"px";
-
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),800);
-  }
+  if(noCount>=5) noBtn.style.display="none";
 }
 </script>
 
