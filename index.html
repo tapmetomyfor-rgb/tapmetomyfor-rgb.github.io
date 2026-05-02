@@ -16,16 +16,80 @@ body {
   overflow: hidden;
 }
 
+/* ซอง */
+.envelope {
+  width: 200px;
+  height: 140px;
+  background: #66b3ff;
+  position: relative;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* ฝาซอง */
+.flap {
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-left: 100px solid transparent;
+  border-right: 100px solid transparent;
+  border-bottom: 70px solid #3399ff;
+  transform-origin: top;
+  transition: 0.5s;
+}
+
+/* เปิด */
+.envelope.open .flap {
+  transform: rotateX(180deg);
+}
+
+/* ✨ เด้ง */
+.bounce {
+  animation: bounce 0.4s;
+}
+
+/* ✨ สั่น */
+.shake {
+  animation: shake 0.4s;
+}
+
+/* keyframes */
+@keyframes bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* จดหมาย */
 .letter {
+  position: absolute;
+  width: 320px;
   background: white;
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   text-align: center;
-  width: 320px;
-  position: relative;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: 0.5s;
 }
 
+.letter.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* รูป */
 img {
   width: 100%;
   height: 200px;
@@ -87,13 +151,14 @@ h1 {
 
 <body>
 
+<!-- ซอง -->
+<div class="envelope" id="env" onclick="handleClick()">
+  <div class="flap"></div>
+</div>
+
+<!-- จดหมาย -->
 <div class="letter" id="letter">
-
-  <!-- 🐶 รูปชิบะนอน -->
-  <img 
-    src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800"
-    onerror="this.src='https://picsum.photos/400/200'">
-
+  <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
   <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
 
   <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
@@ -103,18 +168,43 @@ h1 {
 </div>
 
 <script>
+let clickCount = 0;
 let yesScale = 1;
 let noScale = 1;
 let noCount = 0;
 
+function handleClick(){
+  const env = document.getElementById("env");
+
+  clickCount++;
+
+  if(clickCount === 1){
+    // เด้ง + สั่น
+    env.classList.add("bounce");
+    env.classList.add("shake");
+
+    setTimeout(()=>{
+      env.classList.remove("bounce");
+      env.classList.remove("shake");
+    },400);
+  } 
+  else {
+    // เปิด
+    env.classList.add("open");
+
+    setTimeout(()=>{
+      env.style.display="none";
+      document.getElementById("letter").classList.add("show");
+    },500);
+  }
+}
+
 function yesClick(e){
   document.getElementById("result").style.display = "block";
 
-  // ปุ่มมอนิ่งใหญ่ขึ้น
   yesScale += 0.2;
   document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
 
-  // เอฟเฟกต์ลอย
   for(let i=0;i<8;i++){
     let el = document.createElement("div");
     el.className = "float";
@@ -125,22 +215,18 @@ function yesClick(e){
     setTimeout(()=>el.remove(),2000);
   }
 
-  // pop
   createPop(e);
 }
 
 function noClick(){
   noCount++;
 
-  // ❌ ปุ่ม "ไม่" เล็กลง
   noScale -= 0.2;
   document.getElementById("noBtn").style.transform = `scale(${noScale})`;
 
-  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้น
   yesScale += 0.25;
   document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
 
-  // หายหลัง 5 ครั้ง
   if(noCount >= 5){
     document.getElementById("noBtn").style.display = "none";
   }
