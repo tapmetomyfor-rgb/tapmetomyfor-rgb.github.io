@@ -31,6 +31,7 @@ img {
   width: 100%;
   border-radius: 15px;
   margin-bottom: 15px;
+  object-fit: cover;
 }
 
 h1 {
@@ -46,8 +47,7 @@ h1 {
   border-radius: 12px;
   cursor: pointer;
   font-size: 16px;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: all 0.25s ease;
 }
 
 .yes {
@@ -66,7 +66,7 @@ h1 {
   display: none;
 }
 
-/* ลอยขึ้น */
+/* ลอย */
 .float {
   position: absolute;
   font-size: 24px;
@@ -74,7 +74,7 @@ h1 {
   pointer-events: none;
 }
 
-/* POP กระจาย */
+/* pop */
 .pop {
   position: absolute;
   font-size: 20px;
@@ -88,19 +88,13 @@ h1 {
 }
 
 @keyframes explode {
-  0% {
-    transform: translate(0,0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--x), var(--y)) scale(1.5);
-    opacity: 0;
-  }
+  0% {transform: translate(0,0) scale(1); opacity:1;}
+  100% {transform: translate(var(--x), var(--y)) scale(1.5); opacity:0;}
 }
 
 @keyframes fadeIn {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
@@ -109,7 +103,10 @@ h1 {
 
 <div class="letter" id="letter">
 
-  <img src="https://cdn.discordapp.com/attachments/1498586128591093880/1500155554038026290/IMG_20260502_222210_763.jpg">
+  <!-- ✅ รูป + fallback กันพัง -->
+  <img 
+    src="https://cdn.discordapp.com/attachments/1498586128591093880/1500155554038026290/IMG_20260502_222210_763.jpg"
+    onerror="this.src='https://via.placeholder.com/300x200?text=Image+Not+Found'">
 
   <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
 
@@ -121,17 +118,21 @@ h1 {
 
 <script>
 let noCount = 0;
-let scale = 1;
+let noScale = 1;
+let yesScale = 1;
 
 function sayYes(e) {
   document.getElementById("result").style.display = "block";
 
-  // ลอยขึ้น
-  for (let i = 0; i < 10; i++) {
-    createFloat();
-  }
+  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้นทุกครั้ง
+  const btn = document.getElementById("yesBtn");
+  yesScale += 0.15;
+  btn.style.transform = `scale(${yesScale})`;
 
-  // POP รอบปุ่ม
+  // ลอย
+  for (let i = 0; i < 10; i++) createFloat();
+
+  // pop
   createPop(e);
 }
 
@@ -145,34 +146,27 @@ function createFloat() {
   el.style.top = "150px";
 
   letter.appendChild(el);
-
   setTimeout(() => el.remove(), 2000);
 }
 
 function createPop(e) {
-  const btn = e.target;
-  const rect = btn.getBoundingClientRect();
+  const rect = e.target.getBoundingClientRect();
 
   for (let i = 0; i < 12; i++) {
     const pop = document.createElement("div");
     pop.className = "pop";
     pop.innerText = "💙";
 
-    // กระจายเป็นวง
     const angle = Math.random() * 2 * Math.PI;
     const distance = 80 + Math.random() * 40;
 
-    const x = Math.cos(angle) * distance + "px";
-    const y = Math.sin(angle) * distance + "px";
-
-    pop.style.setProperty("--x", x);
-    pop.style.setProperty("--y", y);
+    pop.style.setProperty("--x", Math.cos(angle)*distance + "px");
+    pop.style.setProperty("--y", Math.sin(angle)*distance + "px");
 
     pop.style.left = rect.left + rect.width/2 + "px";
     pop.style.top = rect.top + rect.height/2 + "px";
 
     document.body.appendChild(pop);
-
     setTimeout(() => pop.remove(), 800);
   }
 }
@@ -180,8 +174,8 @@ function createPop(e) {
 function sayNo() {
   const btn = document.getElementById("noBtn");
   noCount++;
-  scale -= 0.2;
-  btn.style.transform = `scale(${scale})`;
+  noScale -= 0.2;
+  btn.style.transform = `scale(${noScale})`;
 
   if (noCount >= 5) {
     btn.style.display = "none";
