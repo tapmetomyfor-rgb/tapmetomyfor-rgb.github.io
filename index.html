@@ -22,20 +22,25 @@ body {
 
 /* ซอง */
 .envelope {
-  width: 200px;
-  height: 140px;
+  width: 220px;
+  height: 150px;
   background: #66b3ff;
   border-radius: 10px;
-  margin: 0 auto 20px;
+  margin: 0 auto 10px;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
 }
 
 .flap {
   position: absolute;
   top: 0;
-  border-left: 100px solid transparent;
-  border-right: 100px solid transparent;
-  border-bottom: 70px solid #3399ff;
+  border-left: 110px solid transparent;
+  border-right: 110px solid transparent;
+  border-bottom: 75px solid #3399ff;
   transform-origin: top;
   transition: 0.5s;
 }
@@ -80,7 +85,6 @@ body {
   margin-top: 20px;
 }
 
-/* รูป */
 img {
   width: 100%;
   height: 200px;
@@ -102,7 +106,11 @@ h1 { color: #3399ff; font-size: 20px; }
 .yes { background: #66b3ff; color: white; }
 .no { background: #ccc; }
 
-#result { display: none; color: #3399ff; }
+#result {
+  display: none;
+  color: #3399ff;
+  margin-top: 10px;
+}
 
 /* เอฟเฟกต์ */
 .float {
@@ -127,23 +135,27 @@ h1 { color: #3399ff; font-size: 20px; }
 
 <div class="container">
 
+  <!-- ซอง + ชื่อ -->
   <div class="envelope" id="env">
+    จดหมายถึงมะตาว 💌
     <div class="flap"></div>
   </div>
 
-  <button id="openBtn" class="openBtn" onclick="openLetter()">เปิดจดหมาย 💌</button>
+  <button id="openBtn" class="openBtn" onclick="openLetter()">เปิดจดหมาย</button>
 
   <div class="letter" id="letter">
 
     <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
 
-    <!-- ✅ ข้อความใหม่ -->
-    <h1>มอนิ่งนะค้าบ ☀️<br>ตื่นมาขอให้เป็นวันที่สดใส 💙</h1>
+    <!-- ขึ้นก่อน -->
+    <h1>มอนิ่งนะค้าบ ☀️</h1>
+
+    <!-- ขึ้นทีหลัง -->
+    <div id="result">ตื่นมาขอให้เป็นวันที่สดใสนะค้าบ 💙</div>
 
     <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
     <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
 
-    <div id="result">มอนิ่งค่ะ 💙</div>
   </div>
 
 </div>
