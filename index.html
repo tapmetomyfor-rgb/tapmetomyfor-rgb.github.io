@@ -106,10 +106,18 @@ h1 { color: #3399ff; font-size: 20px; }
 .yes { background: #66b3ff; color: white; }
 .no { background: #ccc; }
 
+/* ✨ fade ข้อความ */
 #result {
-  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.8s ease;
   color: #3399ff;
   margin-top: 10px;
+}
+
+#result.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* เอฟเฟกต์ */
@@ -135,7 +143,6 @@ h1 { color: #3399ff; font-size: 20px; }
 
 <div class="container">
 
-  <!-- ซอง + ชื่อ -->
   <div class="envelope" id="env">
     จดหมายถึงมะตาว 💌
     <div class="flap"></div>
@@ -147,10 +154,9 @@ h1 { color: #3399ff; font-size: 20px; }
 
     <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
 
-    <!-- ขึ้นก่อน -->
     <h1>มอนิ่งนะค้าบ ☀️</h1>
 
-    <!-- ขึ้นทีหลัง -->
+    <!-- ✨ ข้อความ fade -->
     <div id="result">ตื่นมาขอให้เป็นวันที่สดใสนะค้าบ 💙</div>
 
     <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
@@ -185,7 +191,8 @@ function openLetter(){
 }
 
 function yesClick(e){
-  document.getElementById("result").style.display = "block";
+  // ✨ แสดงแบบ fade
+  document.getElementById("result").classList.add("show");
 
   yesScale += 0.2;
   document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
