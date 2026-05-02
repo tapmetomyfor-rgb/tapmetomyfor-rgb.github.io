@@ -12,15 +12,15 @@ body {
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #cce7ff, #e6f2ff);
-  font-family: "Segoe UI", sans-serif;
+  font-family: sans-serif;
   overflow: hidden;
 }
 
 .letter {
   background: white;
-  padding: 30px;
+  padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   text-align: center;
   width: 320px;
   position: relative;
@@ -37,46 +37,37 @@ img {
 h1 {
   color: #3399ff;
   font-size: 20px;
-  margin-bottom: 20px;
 }
 
 .btn {
   border: none;
-  padding: 12px 20px;
+  padding: 12px 18px;
   margin: 10px;
   border-radius: 12px;
   cursor: pointer;
   font-size: 16px;
-  transition: all 0.25s ease;
+  transition: 0.25s;
 }
 
-.yes {
-  background: #66b3ff;
-  color: white;
-}
-
-.no {
-  background: #ccc;
-}
+.yes { background: #66b3ff; color: white; }
+.no { background: #ccc; }
 
 #result {
-  margin-top: 15px;
-  font-size: 18px;
-  color: #3399ff;
+  margin-top: 10px;
   display: none;
+  color: #3399ff;
 }
 
 /* เอฟเฟกต์ */
 .float {
   position: absolute;
   font-size: 22px;
-  animation: floatUp 2s ease forwards;
+  animation: floatUp 2s forwards;
 }
 
 .pop {
   position: absolute;
-  font-size: 20px;
-  animation: explode 0.8s ease forwards;
+  animation: explode 0.8s forwards;
 }
 
 @keyframes floatUp {
@@ -85,8 +76,11 @@ h1 {
 }
 
 @keyframes explode {
-  0% {transform: translate(0,0) scale(1); opacity:1;}
-  100% {transform: translate(var(--x), var(--y)) scale(1.5); opacity:0;}
+  0% {transform: translate(0,0); opacity:1;}
+  100% {
+    transform: translate(var(--x), var(--y)) scale(1.5);
+    opacity: 0;
+  }
 }
 </style>
 </head>
@@ -95,88 +89,82 @@ h1 {
 
 <div class="letter" id="letter">
 
-  <!-- รูป + fallback -->
-  <img src="image.jpg" onerror="this.src='https://picsum.photos/400/200'">
+  <!-- 🐶 รูปชิบะนอน -->
+  <img 
+    src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800"
+    onerror="this.src='https://picsum.photos/400/200'">
 
   <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
 
-  <button class="btn yes" id="yesBtn" onclick="sayYes(event)">มอนิ่งค่ะ</button>
-  <button class="btn no" id="noBtn" onclick="sayNo()">ไม่</button>
+  <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
+  <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
 
   <div id="result">มอนิ่งค่ะ 💙</div>
 </div>
 
 <script>
-let noCount = 0;
-let noScale = 1;
 let yesScale = 1;
+let noScale = 1;
+let noCount = 0;
 
-function sayYes(e) {
+function yesClick(e){
   document.getElementById("result").style.display = "block";
 
-  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้น
-  const yesBtn = document.getElementById("yesBtn");
+  // ปุ่มมอนิ่งใหญ่ขึ้น
   yesScale += 0.2;
-  yesBtn.style.transform = `scale(${yesScale})`;
+  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
 
-  // ลอย
-  for (let i = 0; i < 8; i++) createFloat();
+  // เอฟเฟกต์ลอย
+  for(let i=0;i<8;i++){
+    let el = document.createElement("div");
+    el.className = "float";
+    el.innerText = Math.random()>0.5 ? "💙" : "☀️";
+    el.style.left = Math.random()*260+"px";
+    el.style.top = "150px";
+    document.getElementById("letter").appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
 
   // pop
   createPop(e);
 }
 
-function sayNo() {
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-
+function noClick(){
   noCount++;
 
   // ❌ ปุ่ม "ไม่" เล็กลง
   noScale -= 0.2;
-  noBtn.style.transform = `scale(${noScale})`;
+  document.getElementById("noBtn").style.transform = `scale(${noScale})`;
 
-  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้นด้วย
-  yesScale += 0.2;
-  yesBtn.style.transform = `scale(${yesScale})`;
+  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้น
+  yesScale += 0.25;
+  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
 
-  if (noCount >= 5) {
-    noBtn.style.display = "none";
+  // หายหลัง 5 ครั้ง
+  if(noCount >= 5){
+    document.getElementById("noBtn").style.display = "none";
   }
 }
 
-function createFloat() {
-  const el = document.createElement("div");
-  el.className = "float";
-  el.innerText = Math.random() > 0.5 ? "💙" : "☀️";
-
-  const letter = document.getElementById("letter");
-  el.style.left = Math.random() * 260 + "px";
-  el.style.top = "150px";
-
-  letter.appendChild(el);
-  setTimeout(() => el.remove(), 2000);
-}
-
-function createPop(e) {
+function createPop(e){
   const rect = e.target.getBoundingClientRect();
 
-  for (let i = 0; i < 10; i++) {
-    const pop = document.createElement("div");
-    pop.className = "pop";
-    pop.innerText = "💙";
+  for(let i=0;i<10;i++){
+    let p = document.createElement("div");
+    p.className = "pop";
+    p.innerText = "💙";
 
-    const angle = Math.random() * 2 * Math.PI;
-    const distance = 80 + Math.random() * 40;
+    let a = Math.random()*Math.PI*2;
+    let d = 80+Math.random()*40;
 
-    pop.style.setProperty("--x", Math.cos(angle)*distance + "px");
-    pop.style.setProperty("--y", Math.sin(angle)*distance + "px");
+    p.style.setProperty("--x", Math.cos(a)*d+"px");
+    p.style.setProperty("--y", Math.sin(a)*d+"px");
 
-    pop.style.left = rect.left + rect.width/2 + "px";
-    pop.style.top = rect.top + rect.height/2 + "px";
+    p.style.left = rect.left+rect.width/2+"px";
+    p.style.top = rect.top+rect.height/2+"px";
 
-    document.body.appendChild(pop);
-    setTimeout(() => pop.remove(), 800);
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),800);
   }
 }
 </script>
