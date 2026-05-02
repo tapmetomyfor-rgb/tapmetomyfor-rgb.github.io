@@ -20,7 +20,7 @@ body {
 
 .container { text-align: center; }
 
-/* ซอง */
+/* ซองจดหมาย */
 .envelope {
   width: 220px;
   height: 150px;
@@ -55,11 +55,11 @@ body {
   transform: rotateX(180deg);
 }
 
-/* เด้ง */
+/* เอฟเฟกต์เด้ง */
 .bounce { animation: bounce 0.4s; }
 @keyframes bounce { 50% { transform: scale(1.1); } }
 
-/* ปุ่ม */
+/* ปุ่มเปิด */
 .openBtn {
   padding: 10px 20px;
   border: none;
@@ -67,9 +67,10 @@ body {
   background: #3399ff;
   color: white;
   cursor: pointer;
+  font-family: 'Kanit', sans-serif;
 }
 
-/* จดหมาย */
+/* ตัวจดหมาย */
 .letter {
   width: 320px;
   background: white;
@@ -95,20 +96,21 @@ h1 { color: #3399ff; }
   margin: 10px;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.3s ease; /* 👈 เพิ่มเพื่อให้ขยายนุ่มนวล */
+  font-family: 'Kanit', sans-serif;
+  transition: transform 0.2s ease; /* ทำให้ขยายแบบนุ่มๆ */
 }
 
 .yes { background: #66b3ff; color: white; }
-.no { background: #ccc; }
+.no { background: #ccc; position: relative; }
 
-/* ✨ ข้อความใหญ่ */
+/* ข้อความหลังกดตกลง */
 #result {
   opacity: 0;
   transform: translateY(10px);
   transition: 0.8s;
   color: #3399ff;
   margin-top: 15px;
-  font-size: 22px; 
+  font-size: 22px;
   font-weight: 600;
 }
 
@@ -117,11 +119,12 @@ h1 { color: #3399ff; }
   transform: translateY(0);
 }
 
-/* 💖 หัวใจ */
+/* หัวใจลอย */
 .heart {
   position: fixed;
   bottom: -20px;
   animation: floatUp 3s linear forwards;
+  pointer-events: none;
 }
 
 @keyframes floatUp {
@@ -142,16 +145,15 @@ h1 { color: #3399ff; }
   <button id="openBtn" class="openBtn" onclick="openLetter()">เปิดจดหมาย</button>
 
   <div class="letter" id="letter">
-
     <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
-
     <h1>มอนิ่งนะค้าบ ☀️</h1>
 
-    <button class="btn yes" id="yesBtn" onclick="yesClick()">มอนิ่งค่ะ</button>
-    <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 100px;">
+        <button class="btn yes" id="yesBtn" onclick="yesClick()">มอนิ่งค่ะ</button>
+        <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
+    </div>
 
     <div id="result">ตื่นมาขอให้เป็นวันที่สดใสนะค้าบ 💙</div>
-
   </div>
 
 </div>
@@ -159,17 +161,17 @@ h1 { color: #3399ff; }
 <audio id="openSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
 
 <script>
-let noScale = 1;
-let yesScale = 1; // 👈 สร้างตัวแปรไว้เก็บขนาดปุ่ม Yes
 let noCount = 0;
+let yesScale = 1;
+let noScale = 1;
 
 function openLetter(){
   const env = document.getElementById("env");
   document.getElementById("openBtn").style.display = "none";
   
-  // ป้องกัน Error กรณี Audio โหลดไม่ทัน
+  // เล่นเสียง (บาง Browser อาจจะ Block ถ้ายังไม่มีการ Interact)
   const sound = document.getElementById("openSound");
-  if (sound) sound.play().catch(e => console.log("Audio play blocked"));
+  sound.play().catch(() => console.log("Audio waiting for user interaction"));
 
   env.classList.add("bounce");
 
@@ -190,30 +192,32 @@ function yesClick(){
   document.getElementById("yesBtn").style.display = "none";
   document.getElementById("noBtn").style.display = "none";
 
-  for(let i=0;i<15;i++){
-    let h=document.createElement("div");
-    h.className="heart";
-    h.innerText="💙";
-    h.style.left=Math.random()*100+"vw";
-    h.style.fontSize=(16+Math.random()*20)+"px";
+  // หัวใจกระจาย
+  for(let i=0; i<15; i++){
+    let h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "💙";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = (16 + Math.random() * 20) + "px";
     document.body.appendChild(h);
-    setTimeout(()=>h.remove(),3000);
+    setTimeout(() => h.remove(), 3000);
   }
 }
 
 function noClick(){
   noCount++;
   
-  // ลดขนาดปุ่ม No
-  noScale -= 0.15;
-  document.getElementById("noBtn").style.transform=`scale(${noScale})`;
-  
-  // ⚡️ เพิ่มขนาดปุ่ม Yes ทุกครั้งที่กด No
-  yesScale += 0.4; // ปรับตัวเลขนี้ได้ตามต้องการ (ยิ่งเยอะยิ่งใหญ่เร็ว)
-  document.getElementById("yesBtn").style.transform=`scale(${yesScale})`;
+  // 1. ขยายปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้นเรื่อยๆ
+  yesScale += 0.5; 
+  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
 
-  if(noCount>=6){
-    document.getElementById("noBtn").style.display="none";
+  // 2. ลดขนาดปุ่ม "ไม่" เล็กลงเรื่อยๆ
+  noScale -= 0.15;
+  document.getElementById("noBtn").style.transform = `scale(${noScale})`;
+
+  // 3. ถ้ากดครบ 5 ครั้ง ปุ่ม "ไม่" หายไปเลย
+  if(noCount >= 5){
+    document.getElementById("noBtn").style.display = "none";
   }
 }
 </script>
