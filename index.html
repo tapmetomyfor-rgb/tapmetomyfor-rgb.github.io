@@ -95,6 +95,7 @@ h1 { color: #3399ff; }
   margin: 10px;
   border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.3s ease; /* 👈 เพิ่มเพื่อให้ขยายนุ่มนวล */
 }
 
 .yes { background: #66b3ff; color: white; }
@@ -107,7 +108,7 @@ h1 { color: #3399ff; }
   transition: 0.8s;
   color: #3399ff;
   margin-top: 15px;
-  font-size: 22px; /* 👈 ใหญ่ขึ้น */
+  font-size: 22px; 
   font-weight: 600;
 }
 
@@ -159,48 +160,42 @@ h1 { color: #3399ff; }
 
 <script>
 let noScale = 1;
+let yesScale = 1; // 👈 สร้างตัวแปรไว้เก็บขนาดปุ่ม Yes
 let noCount = 0;
 
 function openLetter(){
   const env = document.getElementById("env");
-
   document.getElementById("openBtn").style.display = "none";
-  document.getElementById("openSound").play();
+  
+  // ป้องกัน Error กรณี Audio โหลดไม่ทัน
+  const sound = document.getElementById("openSound");
+  if (sound) sound.play().catch(e => console.log("Audio play blocked"));
 
   env.classList.add("bounce");
 
   setTimeout(()=>{
     env.classList.remove("bounce");
-
     setTimeout(()=>{
       env.classList.add("open");
-
       setTimeout(()=>{
         document.getElementById("letter").style.display="block";
         env.style.display="none";
       },500);
-
     },500);
-
   },300);
 }
 
 function yesClick(){
-  // แสดงข้อความ
   document.getElementById("result").classList.add("show");
-
-  // ❌ ซ่อนปุ่มทั้งคู่
   document.getElementById("yesBtn").style.display = "none";
   document.getElementById("noBtn").style.display = "none";
 
-  // 💖 หัวใจลอย
   for(let i=0;i<15;i++){
     let h=document.createElement("div");
     h.className="heart";
     h.innerText="💙";
     h.style.left=Math.random()*100+"vw";
     h.style.fontSize=(16+Math.random()*20)+"px";
-
     document.body.appendChild(h);
     setTimeout(()=>h.remove(),3000);
   }
@@ -208,11 +203,16 @@ function yesClick(){
 
 function noClick(){
   noCount++;
-
-  noScale -= 0.2;
+  
+  // ลดขนาดปุ่ม No
+  noScale -= 0.15;
   document.getElementById("noBtn").style.transform=`scale(${noScale})`;
+  
+  // ⚡️ เพิ่มขนาดปุ่ม Yes ทุกครั้งที่กด No
+  yesScale += 0.4; // ปรับตัวเลขนี้ได้ตามต้องการ (ยิ่งเยอะยิ่งใหญ่เร็ว)
+  document.getElementById("yesBtn").style.transform=`scale(${yesScale})`;
 
-  if(noCount>=5){
+  if(noCount>=6){
     document.getElementById("noBtn").style.display="none";
   }
 }
