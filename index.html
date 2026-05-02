@@ -16,6 +16,11 @@ body {
   overflow: hidden;
 }
 
+/* กล่องรวม */
+.container {
+  text-align: center;
+}
+
 /* ซอง */
 .envelope {
   width: 200px;
@@ -23,8 +28,7 @@ body {
   background: #66b3ff;
   position: relative;
   border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
+  margin: 0 auto 20px;
 }
 
 /* ฝาซอง */
@@ -40,53 +44,44 @@ body {
   transition: 0.5s;
 }
 
-/* เปิด */
 .envelope.open .flap {
   transform: rotateX(180deg);
 }
 
-/* ✨ เด้ง */
-.bounce {
-  animation: bounce 0.4s;
-}
+/* เด้ง + สั่น */
+.bounce { animation: bounce 0.4s; }
+.shake { animation: shake 0.4s; }
 
-/* ✨ สั่น */
-.shake {
-  animation: shake 0.4s;
-}
-
-/* keyframes */
 @keyframes bounce {
-  0% { transform: scale(1); }
   50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
 }
-
 @keyframes shake {
-  0% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
   50% { transform: translateX(5px); }
   75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
+}
+
+/* ปุ่มเปิด */
+.openBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #3399ff;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 /* จดหมาย */
 .letter {
-  position: absolute;
   width: 320px;
   background: white;
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   text-align: center;
-  opacity: 0;
-  transform: translateY(50px);
-  transition: 0.5s;
-}
-
-.letter.show {
-  opacity: 1;
-  transform: translateY(0);
+  display: none;
+  margin-top: 20px;
 }
 
 /* รูป */
@@ -98,10 +93,7 @@ img {
   margin-bottom: 15px;
 }
 
-h1 {
-  color: #3399ff;
-  font-size: 20px;
-}
+h1 { color: #3399ff; font-size: 20px; }
 
 .btn {
   border: none;
@@ -109,94 +101,81 @@ h1 {
   margin: 10px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 16px;
-  transition: 0.25s;
 }
 
 .yes { background: #66b3ff; color: white; }
 .no { background: #ccc; }
 
-#result {
-  margin-top: 10px;
-  display: none;
-  color: #3399ff;
-}
+#result { display: none; color: #3399ff; }
 
 /* เอฟเฟกต์ */
 .float {
   position: absolute;
-  font-size: 22px;
   animation: floatUp 2s forwards;
 }
-
 .pop {
   position: absolute;
   animation: explode 0.8s forwards;
 }
 
 @keyframes floatUp {
-  0% {opacity:1; transform:translateY(0);}
-  100% {opacity:0; transform:translateY(-150px) scale(1.5);}
+  to { transform: translateY(-150px); opacity: 0; }
 }
-
 @keyframes explode {
-  0% {transform: translate(0,0); opacity:1;}
-  100% {
-    transform: translate(var(--x), var(--y)) scale(1.5);
-    opacity: 0;
-  }
+  to { transform: translate(var(--x), var(--y)); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ซอง -->
-<div class="envelope" id="env" onclick="handleClick()">
-  <div class="flap"></div>
-</div>
+<div class="container">
 
-<!-- จดหมาย -->
-<div class="letter" id="letter">
-  <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
-  <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
+  <!-- ซอง -->
+  <div class="envelope" id="env">
+    <div class="flap"></div>
+  </div>
 
-  <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
-  <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
+  <!-- ปุ่มเปิด -->
+  <button class="openBtn" onclick="openLetter()">เปิดจดหมาย 💌</button>
 
-  <div id="result">มอนิ่งค่ะ 💙</div>
+  <!-- จดหมาย -->
+  <div class="letter" id="letter">
+
+    <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
+
+    <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
+
+    <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
+    <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
+
+    <div id="result">มอนิ่งค่ะ 💙</div>
+  </div>
+
 </div>
 
 <script>
-let clickCount = 0;
 let yesScale = 1;
 let noScale = 1;
 let noCount = 0;
 
-function handleClick(){
+function openLetter(){
   const env = document.getElementById("env");
 
-  clickCount++;
+  // เด้ง + สั่น
+  env.classList.add("bounce","shake");
 
-  if(clickCount === 1){
-    // เด้ง + สั่น
-    env.classList.add("bounce");
-    env.classList.add("shake");
-
-    setTimeout(()=>{
-      env.classList.remove("bounce");
-      env.classList.remove("shake");
-    },400);
-  } 
-  else {
-    // เปิด
+  setTimeout(()=>{
+    env.classList.remove("bounce","shake");
     env.classList.add("open");
 
+    // แสดงจดหมาย
     setTimeout(()=>{
+      document.getElementById("letter").style.display="block";
       env.style.display="none";
-      document.getElementById("letter").classList.add("show");
-    },500);
-  }
+    },400);
+
+  },400);
 }
 
 function yesClick(e){
@@ -207,11 +186,11 @@ function yesClick(e){
 
   for(let i=0;i<8;i++){
     let el = document.createElement("div");
-    el.className = "float";
-    el.innerText = Math.random()>0.5 ? "💙" : "☀️";
-    el.style.left = Math.random()*260+"px";
-    el.style.top = "150px";
-    document.getElementById("letter").appendChild(el);
+    el.className="float";
+    el.innerText=Math.random()>0.5?"💙":"☀️";
+    el.style.left=Math.random()*300+"px";
+    el.style.top="150px";
+    document.body.appendChild(el);
     setTimeout(()=>el.remove(),2000);
   }
 
@@ -222,13 +201,13 @@ function noClick(){
   noCount++;
 
   noScale -= 0.2;
-  document.getElementById("noBtn").style.transform = `scale(${noScale})`;
+  document.getElementById("noBtn").style.transform=`scale(${noScale})`;
 
   yesScale += 0.25;
-  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
+  document.getElementById("yesBtn").style.transform=`scale(${yesScale})`;
 
-  if(noCount >= 5){
-    document.getElementById("noBtn").style.display = "none";
+  if(noCount>=5){
+    document.getElementById("noBtn").style.display="none";
   }
 }
 
@@ -236,18 +215,18 @@ function createPop(e){
   const rect = e.target.getBoundingClientRect();
 
   for(let i=0;i<10;i++){
-    let p = document.createElement("div");
-    p.className = "pop";
-    p.innerText = "💙";
+    let p=document.createElement("div");
+    p.className="pop";
+    p.innerText="💙";
 
-    let a = Math.random()*Math.PI*2;
-    let d = 80+Math.random()*40;
+    let a=Math.random()*Math.PI*2;
+    let d=80+Math.random()*40;
 
-    p.style.setProperty("--x", Math.cos(a)*d+"px");
-    p.style.setProperty("--y", Math.sin(a)*d+"px");
+    p.style.setProperty("--x",Math.cos(a)*d+"px");
+    p.style.setProperty("--y",Math.sin(a)*d+"px");
 
-    p.style.left = rect.left+rect.width/2+"px";
-    p.style.top = rect.top+rect.height/2+"px";
+    p.style.left=rect.left+"px";
+    p.style.top=rect.top+"px";
 
     document.body.appendChild(p);
     setTimeout(()=>p.remove(),800);
