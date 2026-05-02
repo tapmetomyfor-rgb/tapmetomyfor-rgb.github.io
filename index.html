@@ -23,15 +23,15 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   text-align: center;
   width: 320px;
-  animation: fadeIn 1s ease;
   position: relative;
 }
 
 img {
   width: 100%;
+  height: 200px;
+  object-fit: cover;
   border-radius: 15px;
   margin-bottom: 15px;
-  object-fit: cover;
 }
 
 h1 {
@@ -66,19 +66,16 @@ h1 {
   display: none;
 }
 
-/* ลอย */
+/* เอฟเฟกต์ */
 .float {
   position: absolute;
-  font-size: 24px;
+  font-size: 22px;
   animation: floatUp 2s ease forwards;
-  pointer-events: none;
 }
 
-/* pop */
 .pop {
   position: absolute;
   font-size: 20px;
-  pointer-events: none;
   animation: explode 0.8s ease forwards;
 }
 
@@ -91,11 +88,6 @@ h1 {
   0% {transform: translate(0,0) scale(1); opacity:1;}
   100% {transform: translate(var(--x), var(--y)) scale(1.5); opacity:0;}
 }
-
-@keyframes fadeIn {
-  from {opacity:0; transform:translateY(20px);}
-  to {opacity:1; transform:translateY(0);}
-}
 </style>
 </head>
 
@@ -103,10 +95,8 @@ h1 {
 
 <div class="letter" id="letter">
 
-  <!-- ✅ รูป + fallback กันพัง -->
-  <img 
-    src="https://cdn.discordapp.com/attachments/1498586128591093880/1500155554038026290/IMG_20260502_222210_763.jpg"
-    onerror="this.src='https://via.placeholder.com/300x200?text=Image+Not+Found'">
+  <!-- รูป + fallback -->
+  <img src="image.jpg" onerror="this.src='https://picsum.photos/400/200'">
 
   <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
 
@@ -124,16 +114,35 @@ let yesScale = 1;
 function sayYes(e) {
   document.getElementById("result").style.display = "block";
 
-  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้นทุกครั้ง
-  const btn = document.getElementById("yesBtn");
-  yesScale += 0.15;
-  btn.style.transform = `scale(${yesScale})`;
+  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้น
+  const yesBtn = document.getElementById("yesBtn");
+  yesScale += 0.2;
+  yesBtn.style.transform = `scale(${yesScale})`;
 
   // ลอย
-  for (let i = 0; i < 10; i++) createFloat();
+  for (let i = 0; i < 8; i++) createFloat();
 
   // pop
   createPop(e);
+}
+
+function sayNo() {
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+
+  noCount++;
+
+  // ❌ ปุ่ม "ไม่" เล็กลง
+  noScale -= 0.2;
+  noBtn.style.transform = `scale(${noScale})`;
+
+  // ✅ ปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้นด้วย
+  yesScale += 0.2;
+  yesBtn.style.transform = `scale(${yesScale})`;
+
+  if (noCount >= 5) {
+    noBtn.style.display = "none";
+  }
 }
 
 function createFloat() {
@@ -142,7 +151,7 @@ function createFloat() {
   el.innerText = Math.random() > 0.5 ? "💙" : "☀️";
 
   const letter = document.getElementById("letter");
-  el.style.left = Math.random() * 250 + "px";
+  el.style.left = Math.random() * 260 + "px";
   el.style.top = "150px";
 
   letter.appendChild(el);
@@ -152,7 +161,7 @@ function createFloat() {
 function createPop(e) {
   const rect = e.target.getBoundingClientRect();
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 10; i++) {
     const pop = document.createElement("div");
     pop.className = "pop";
     pop.innerText = "💙";
@@ -168,17 +177,6 @@ function createPop(e) {
 
     document.body.appendChild(pop);
     setTimeout(() => pop.remove(), 800);
-  }
-}
-
-function sayNo() {
-  const btn = document.getElementById("noBtn");
-  noCount++;
-  noScale -= 0.2;
-  btn.style.transform = `scale(${noScale})`;
-
-  if (noCount >= 5) {
-    btn.style.display = "none";
   }
 }
 </script>
