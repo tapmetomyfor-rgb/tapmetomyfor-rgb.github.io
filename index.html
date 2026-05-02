@@ -16,7 +16,6 @@ body {
   overflow: hidden;
 }
 
-/* กล่องรวม */
 .container {
   text-align: center;
 }
@@ -26,17 +25,14 @@ body {
   width: 200px;
   height: 140px;
   background: #66b3ff;
-  position: relative;
   border-radius: 10px;
   margin: 0 auto 20px;
+  position: relative;
 }
 
-/* ฝาซอง */
 .flap {
   position: absolute;
   top: 0;
-  width: 0;
-  height: 0;
   border-left: 100px solid transparent;
   border-right: 100px solid transparent;
   border-bottom: 70px solid #3399ff;
@@ -131,20 +127,18 @@ h1 { color: #3399ff; font-size: 20px; }
 
 <div class="container">
 
-  <!-- ซอง -->
   <div class="envelope" id="env">
     <div class="flap"></div>
   </div>
 
-  <!-- ปุ่มเปิด -->
-  <button class="openBtn" onclick="openLetter()">เปิดจดหมาย 💌</button>
+  <button id="openBtn" class="openBtn" onclick="openLetter()">เปิดจดหมาย 💌</button>
 
-  <!-- จดหมาย -->
   <div class="letter" id="letter">
 
     <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
 
-    <h1>มอนิ่งนะครับ คุณนายตื่นเช้า ☀️</h1>
+    <!-- ✅ ข้อความใหม่ -->
+    <h1>มอนิ่งนะค้าบ ☀️<br>ตื่นมาขอให้เป็นวันที่สดใส 💙</h1>
 
     <button class="btn yes" id="yesBtn" onclick="yesClick(event)">มอนิ่งค่ะ</button>
     <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
@@ -162,14 +156,14 @@ let noCount = 0;
 function openLetter(){
   const env = document.getElementById("env");
 
-  // เด้ง + สั่น
+  document.getElementById("openBtn").style.display = "none";
+
   env.classList.add("bounce","shake");
 
   setTimeout(()=>{
     env.classList.remove("bounce","shake");
     env.classList.add("open");
 
-    // แสดงจดหมาย
     setTimeout(()=>{
       document.getElementById("letter").style.display="block";
       env.style.display="none";
@@ -185,7 +179,7 @@ function yesClick(e){
   document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
 
   for(let i=0;i<8;i++){
-    let el = document.createElement("div");
+    let el=document.createElement("div");
     el.className="float";
     el.innerText=Math.random()>0.5?"💙":"☀️";
     el.style.left=Math.random()*300+"px";
@@ -212,7 +206,7 @@ function noClick(){
 }
 
 function createPop(e){
-  const rect = e.target.getBoundingClientRect();
+  const rect=e.target.getBoundingClientRect();
 
   for(let i=0;i<10;i++){
     let p=document.createElement("div");
