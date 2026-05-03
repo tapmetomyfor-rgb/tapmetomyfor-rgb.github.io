@@ -1,226 +1,38 @@
 <!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<title>Morning Letter</title>
+<html lang="en">
 
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8">
+    <title>Anime.js Periodic Table Auto Layout animation</title>
+    <link rel='stylesheet' href='https://codepen.io/juliangarnier/pen/PwzmygE.css'><link rel="stylesheet" href="./style.css">
 
-<style>
-body {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #cce7ff, #e6f2ff);
-  font-family: 'Kanit', sans-serif;
-  overflow: hidden;
-}
-
-.container { text-align: center; }
-
-/* ซองจดหมาย */
-.envelope {
-  width: 220px;
-  height: 150px;
-  background: #66b3ff;
-  border-radius: 10px;
-  margin: 0 auto 10px;
-  position: relative;
-}
-
-.label {
-  position: absolute;
-  width: 100%;
-  top: 60%;
-  transform: translateY(-50%);
-  text-align: center;
-  color: white;
-  font-weight: 600;
-  z-index: 2;
-}
-
-.flap {
-  position: absolute;
-  top: 0;
-  border-left: 110px solid transparent;
-  border-right: 110px solid transparent;
-  border-bottom: 75px solid #3399ff;
-  transform-origin: top;
-  transition: 0.5s;
-}
-
-.envelope.open .flap {
-  transform: rotateX(180deg);
-}
-
-/* เอฟเฟกต์เด้ง */
-.bounce { animation: bounce 0.4s; }
-@keyframes bounce { 50% { transform: scale(1.1); } }
-
-/* ปุ่มเปิด */
-.openBtn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 12px;
-  background: #3399ff;
-  color: white;
-  cursor: pointer;
-  font-family: 'Kanit', sans-serif;
-}
-
-/* ตัวจดหมาย */
-.letter {
-  width: 320px;
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  display: none;
-  margin-top: 20px;
-}
-
-img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 15px;
-}
-
-h1 { color: #3399ff; }
-
-.btn {
-  border: none;
-  padding: 12px 18px;
-  margin: 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-family: 'Kanit', sans-serif;
-  transition: transform 0.2s ease; /* ทำให้ขยายแบบนุ่มๆ */
-}
-
-.yes { background: #66b3ff; color: white; }
-.no { background: #ccc; position: relative; }
-
-/* ข้อความหลังกดตกลง */
-#result {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: 0.8s;
-  color: #3399ff;
-  margin-top: 15px;
-  font-size: 22px;
-  font-weight: 600;
-}
-
-#result.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* หัวใจลอย */
-.heart {
-  position: fixed;
-  bottom: -20px;
-  animation: floatUp 3s linear forwards;
-  pointer-events: none;
-}
-
-@keyframes floatUp {
-  100% { transform: translateY(-120vh); opacity:0; }
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <div class="envelope" id="env">
-    <div class="label">จดหมายถึงมะตาว 💌</div>
-    <div class="flap"></div>
+  </head>
+    
+  <body>
+  <div class="controls">
+  <div class="controls-group display br">
+    <button class="is-active toggle" id="table">table</button>
+    <button class="toggle" id="sphere">sphere</button>
+    <button class="toggle" id="helix">helix</button>
+    <button class="toggle" id="grid">grid</button>
   </div>
-
-  <button id="openBtn" class="openBtn" onclick="openLetter()">เปิดจดหมาย</button>
-
-  <div class="letter" id="letter">
-    <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=800">
-    <h1>มอนิ่งนะค้าบ ☀️</h1>
-
-    <div style="display: flex; justify-content: center; align-items: center; min-height: 100px;">
-        <button class="btn yes" id="yesBtn" onclick="yesClick()">มอนิ่งค่ะ</button>
-        <button class="btn no" id="noBtn" onclick="noClick()">ไม่</button>
-    </div>
-
-    <div id="result">ตื่นมาขอให้เป็นวันที่สดใสนะค้าบ 💙</div>
-  </div>
-
 </div>
+<div id="scene">
+  <div id="scene-content" data-layout="table"></div>
+</div>
+<div class="credits">
+  3D transform calculations ported from this three.js <a href="https://threejs.org/examples/css3d_periodictable.html" target="_blank">demo</a>.
+</div>
+<template id="element">
+  <button class="element" data-color="0">
+    <div class="element-number"></div>
+    <div class="element-symbol"></div>
+    <div class="element-title"></div>
+    <div class="element-description"></div>
+  </button>
+</template>
+    <script type="module" src="./script.js"></script>
 
-<audio id="openSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
-
-<script>
-let noCount = 0;
-let yesScale = 1;
-let noScale = 1;
-
-function openLetter(){
-  const env = document.getElementById("env");
-  document.getElementById("openBtn").style.display = "none";
+  </body>
   
-  // เล่นเสียง (บาง Browser อาจจะ Block ถ้ายังไม่มีการ Interact)
-  const sound = document.getElementById("openSound");
-  sound.play().catch(() => console.log("Audio waiting for user interaction"));
-
-  env.classList.add("bounce");
-
-  setTimeout(()=>{
-    env.classList.remove("bounce");
-    setTimeout(()=>{
-      env.classList.add("open");
-      setTimeout(()=>{
-        document.getElementById("letter").style.display="block";
-        env.style.display="none";
-      },500);
-    },500);
-  },300);
-}
-
-function yesClick(){
-  document.getElementById("result").classList.add("show");
-  document.getElementById("yesBtn").style.display = "none";
-  document.getElementById("noBtn").style.display = "none";
-
-  // หัวใจกระจาย
-  for(let i=0; i<15; i++){
-    let h = document.createElement("div");
-    h.className = "heart";
-    h.innerText = "💙";
-    h.style.left = Math.random() * 100 + "vw";
-    h.style.fontSize = (16 + Math.random() * 20) + "px";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 3000);
-  }
-}
-
-function noClick(){
-  noCount++;
-  
-  // 1. ขยายปุ่ม "มอนิ่งค่ะ" ใหญ่ขึ้นเรื่อยๆ
-  yesScale += 0.5; 
-  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
-
-  // 2. ลดขนาดปุ่ม "ไม่" เล็กลงเรื่อยๆ
-  noScale -= 0.15;
-  document.getElementById("noBtn").style.transform = `scale(${noScale})`;
-
-  // 3. ถ้ากดครบ 5 ครั้ง ปุ่ม "ไม่" หายไปเลย
-  if(noCount >= 5){
-    document.getElementById("noBtn").style.display = "none";
-  }
-}
-</script>
-
-</body>
 </html>
