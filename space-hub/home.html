@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Space Hub Home</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+.content{
+    max-width:900px;
+    margin:50px auto;
+    padding:20px;
+    position:relative;
+    z-index:10;
+}
+
+.glass{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:25px;
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+h2{
+    margin-bottom:15px;
+}
+
+video{
+    width:100%;
+    border-radius:15px;
+}
+
+.preview-image{
+    width:100%;
+    border-radius:15px;
+}
+
+.button-group{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.link-btn{
+    text-decoration:none;
+    padding:15px 25px;
+    border-radius:15px;
+    background:#00bfff;
+    color:white;
+    transition:.3s;
+}
+
+.link-btn:hover{
+    box-shadow:0 0 25px #00bfff;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    margin-top:10px;
+    margin-bottom:15px;
+}
+
+textarea{
+    resize:none;
+    height:120px;
+}
+
+.user-box{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="content">
+
+    <div class="user-box">
+        <h2 id="welcomeText">Welcome</h2>
+    </div>
+
+    <!-- VIDEO -->
+
+    <div class="glass">
+        <h2>🎬 Featured Video</h2>
+
+        <video controls>
+            <source src="assets/videos/intro.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- IMAGE -->
+
+    <div class="glass">
+        <h2>🖼 Featured Image</h2>
+
+        <img
+            src="assets/images/banner1.jpg"
+            class="preview-image">
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="glass">
+
+        <h2>🌌 Community</h2>
+
+        <div class="button-group">
+
+            <a
+            href="https://discord.gg/ใส่ลิงก์ของคุณ"
+            target="_blank"
+            class="link-btn">
+            🎮 Discord
+            </a>
+
+            <a
+            href="https://instagram.com/ใส่ไอจี"
+            target="_blank"
+            class="link-btn">
+            📷 Instagram
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- QUESTION FORM -->
+
+    <div class="glass">
+
+        <h2>💬 Ask Question</h2>
+
+        <input
+            type="text"
+            id="igQuestion"
+            placeholder="Instagram Username">
+
+        <textarea
+            id="question"
+            placeholder="Ask something..."></textarea>
+
+        <button onclick="sendQuestion()">
+            🚀 SEND MESSAGE
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const savedIG = localStorage.getItem("instagram");
+
+if(savedIG){
+
+    document.getElementById("welcomeText").innerText =
+    "🚀 Welcome " + savedIG;
+
+    document.getElementById("igQuestion").value =
+    savedIG;
+
+}
+
+function sendQuestion(){
+
+    const ig =
+    document.getElementById("igQuestion").value;
+
+    const question =
+    document.getElementById("question").value;
+
+    if(!ig || !question){
+
+        alert("กรอกข้อมูลให้ครบ");
+
+        return;
+
+    }
+
+    alert("ส่งคำถามสำเร็จ");
+
+    // ภายหลังใส่ webhook ตรงนี้
+
+    document.getElementById("question").value = "";
+
+}
+
+</script>
+
+</body>
+</html>
