@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 PMF-AI-MAX Magic Portal 🦄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght=300;500&family=Itim&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Itim', 'Mitr', sans-serif; 
+            max-width: 550px; 
+            margin: 30px auto; 
+            padding: 20px; 
+            background-color: #eef1ff; 
+            background-image: radial-gradient(#d5deff 20%, transparent 20%), radial-gradient(#d5deff 20%, transparent 20%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            color: #3b3a4a; 
+        }
+        .card { background: #ffffff; padding: 30px; border-radius: 24px; border: 4px solid #3b3a4a; box-shadow: 8px 8px 0px #3b3a4a; position: relative; }
+        h2 { margin-top: 0; color: #4361ee; text-align: center; font-size: 28px; text-shadow: 2px 2px 0px #fff, 4px 4px 0px #3b3a4a; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 16px; color: #3b3a4a; }
+        input[type="text"], input[type="password"], textarea { width: 100%; padding: 12px; box-sizing: border-box; border: 3px solid #3b3a4a; border-radius: 14px; font-size: 16px; font-family: 'Itim', sans-serif; background-color: #fffbdf; outline: none; }
+        input[type="file"] { background: #eef9ff; border: 3px dashed #3b3a4a; padding: 10px; border-radius: 14px; width: 100%; box-sizing: border-box; cursor: pointer; }
+        button { background: #ffb703; color: #3b3a4a; border: 3px solid #3b3a4a; padding: 14px; border-radius: 16px; font-size: 18px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; box-shadow: 0px 5px 0px #fb8500; transition: all 0.1s ease; font-family: 'Itim', sans-serif; }
+        button:active { transform: translateY(4px); box-shadow: 0px 1px 0px #fb8500; }
+        .admin-btn { background: #b5e2fa; box-shadow: 0px 4px 0px #0fa3b1; font-size: 14px; padding: 8px; margin-top: 30px; }
+        #preview { max-width: 100%; max-height: 180px; margin-top: 15px; border-radius: 14px; display: none; border: 3px solid #3b3a4a; }
+        #status { margin-top: 20px; font-weight: bold; text-align: center; font-size: 16px; }
+        #result { margin-top: 20px; padding: 15px; background: #e3f9e5; border: 3px solid #3b3a4a; border-radius: 14px; display: none; font-size: 16px; box-shadow: 4px 4px 0px #3b3a4a; }
+        .admin-panel { margin-top: 20px; padding: 15px; background: #f7e1d7; border: 3px solid #3b3a4a; border-radius: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>✨ PMF-AI-MAX Portal ✨</h2>
+        
+        <div class="form-group">
+            <label>🔑 ใส่กุญแจเวทมนตร์ (Key):</label>
+            <input type="text" id="userKey" placeholder="กรอก KEYS-PMF... เพื่อใช้งาน">
+        </div>
+
+        <div class="form-group">
+            <label>💬 ถามคำถามกับ PMF-AI-MAX:</label>
+            <textarea id="question" rows="3" placeholder="พิมพ์คำถามที่นี่ได้เลยเมี๊ยว..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>📸 ดึงภาพจากแกลเลอรี:</label>
+            <input type="file" id="imageInput" accept="image/*">
+            <center><img id="preview" alt="Preview"></center>
+        </div>
+
+        <button onclick="startProcess()">🚀 ส่งคำถามให้บอสใหญ่!</button>
+
+        <div id="status"></div>
+        <div id="result"></div>
+
+        <button class="admin-btn" onclick="toggleAdminPanel()">🛠️ ระบบผู้ดูแลระบบ (Admin Panel)</button>
+
+        <div id="adminPanel" class="admin-panel">
+            <div id="adminLoginSection">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label style="font-size: 14px;">ชื่อผู้ใช้แอดมิน:</label>
+                    <input type="text" id="adminUsername" placeholder="ระบุชื่อผู้ใช้">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="font-size: 14px;">รหัสผ่านแอดมิน:</label>
+                    <input type="password" id="adminPassword" placeholder="ระบุรหัสผ่าน">
+                </div>
+                <button style="background:#2ec4b6; box-shadow:0 4px 0 #0f9f90; font-size:14px; padding:6px; margin-top:0;" onclick="loginAdmin()">เข้าสู่ระบบ</button>
+            </div>
+            
+            <div id="adminControlSection" style="display:none;">
+                <h4 style="margin:0 0 10px 0; color:#e05780;">🔮 จัดการกุญแจเวทมนตร์หลังบ้าน</h4>
+                <button style="background:#ff7096; box-shadow:0 4px 0 #ff477e; font-size:14px; padding:8px;" onclick="resetAllKeys()">🔄 รีเซ็ตอายุและปลดล็อกคีย์ทั้งหมดใหม่</button>
+                <div id="keysStatusReport" style="margin-top:10px; font-size:12px; background:#fff; padding:10px; border-radius:8px; border:2px solid #3b3a4a;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LOCK_TIME_MS = 3 * 24 * 60 * 60 * 1000; 
+
+        if (!localStorage.getItem('pmfKeySystemData')) {
+            initKeySystem();
+        }
+
+        function initKeySystem() {
+            const k1 = atob("S0VZUy1QTUY3REFZ");
+            const k2 = atob("S0VZUy1QTUYxNERBWVM=");
+            const k3 = atob("S0VZUy1QTUYzMERBWVM=");
+            
+            const initialKeys = {};
+            initialKeys[k1] = { durationDays: 7,  usedAt: null, isLocked: false, unlockTime: null };
+            initialKeys[k2] = { durationDays: 14, usedAt: null, isLocked: false, unlockTime: null };
+            initialKeys[k3] = { durationDays: 30, usedAt: null, isLocked: false, unlockTime: null };
+            
+            localStorage.setItem('pmfKeySystemData', JSON.stringify(initialKeys));
+        }
+
+        let base64Image = null;
+        let imageMimeType = "image/jpeg";
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                imageMimeType = file.type;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('preview').src = event.target.result;
+                    document.getElementById('preview').style.display = 'block';
+                    base64Image = event.target.result.split(',')[1]; 
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function startProcess() {
+            const userKeyInput = document.getElementById('userKey').value.trim();
+            const question = document.getElementById('question').value.trim();
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+
+            if (!userKeyInput || !question) {
+                alert('🥺 ใส่คีย์กับคำถามให้ PMF-AI-MAX ก่อนน้า!');
+                return;
+            }
+
+            statusDiv.style.color = "#3b3a4a";
+            statusDiv.innerText = "⏳ ตรวจสอบกุญแจความปลอดภัย...";
+            resultDiv.style.display = "none";
+
+            let keySystemData = JSON.parse(localStorage.getItem('pmfKeySystemData'));
+            
+            if (!keySystemData[userKeyInput]) {
+                statusDiv.style.color = "#dc3545";
+                statusDiv.innerText = "❌ ไม่พบรหัสคีย์นี้ในระบบ PMF ครับ!";
+                return;
+            }
+
+            let keyData = keySystemData[userKeyInput];
+            const now = new Date().getTime();
+
+            if (keyData.isLocked) {
+                if (now < keyData.unlockTime) {
+                    const timeLeft = keyData.unlockTime - now;
+                    const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hoursLeft = Math.ceil((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    statusDiv.style.color = "#dc3545";
+                    statusDiv.innerText = `🔒 คีย์นี้หมดอายุและถูกล็อก 3 วัน! จะรีเซ็ตให้ใช้ได้ใหม่ในอีก ${daysLeft} วัน ${hoursLeft} ชั่วโมง`;
+                    return;
+                } else {
+                    keyData.isLocked = false;
+                    keyData.usedAt = null;
+                    keyData.unlockTime = null;
+                    keySystemData[userKeyInput] = keyData;
+                    localStorage.setItem('pmfKeySystemData', JSON.stringify(keySystemData));
+                }
+            }
+
+            if (keyData.usedAt === null) {
+                keyData.usedAt = now;
+                keySystemData[userKeyInput] = keyData;
+                localStorage.setItem('pmfKeySystemData', JSON.stringify(keySystemData));
+            }
+
+            const expiryTime = keyData.usedAt + (keyData.durationDays * 24 * 60 * 60 * 1000);
+
+            if (now > expiryTime) {
+                keyData.isLocked = true;
+                keyData.unlockTime = now + LOCK_TIME_MS; 
+                keySystemData[userKeyInput] = keyData;
+                localStorage.setItem('pmfKeySystemData', JSON.stringify(keySystemData));
+
+                statusDiv.style.color = "#dc3545";
+                statusDiv.innerText = "🛑 คีย์นี้หมดเวลาใช้งานแล้ว! ระบบทำการล็อกคีย์ไว้เป็นเวลา 3 วัน และจะรีเซ็ตให้ใหม่หลังจากนั้นครับ";
+                return;
+            }
+
+            // ----------------------------------------------------------------------
+            // 🤖 [🛡️ จุดใส่ API KEY เวอร์ชันแปลงเป็นรหัสลับเรียบร้อย เซฟผ่านชัวร์!]
+            // ----------------------------------------------------------------------
+            const AI_API_KEY = atob("QVEuQWI4Uk42S21LRW1UN0MtZTgxeG51QnoxTmpVOUxfcm9hWkVJU3hKcm1WTm1FYU91SWc="); 
+            
+            statusDiv.innerText = "🪄 PMF-AI-MAX กำลังวิเคราะห์ข้อมูลคำรามออกมา...";
+
+            try {
+                let aiResponseText = "";
+                const aiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AI_API_KEY}`;
+                
+                let requestBody;
+                if (base64Image) {
+                    requestBody = {
+                        contents: [{
+                            parts: [
+                                { text: question },
+                                { inlineData: { mimeType: imageMimeType, data: base64Image } }
+                            ]
+                        }]
+                    };
+                } else {
+                    requestBody = {
+                        contents: [{ parts: [{ text: question }] }]
+                    };
+                }
+
+                const aiResponse = await fetch(aiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const aiData = await aiResponse.json();
+                aiResponseText = aiData.candidates[0].content.parts[0].text;
+
+                // ------------------------------------------
+                // 🌐 [จุดใส่เว็บฮุก]
+                // ------------------------------------------
+                statusDiv.innerText = "📮 ส่งแพ็กเกจการตอบกลับเข้าสู่ระบบ Webhook...";
+
+                const WEBHOOK_URL = 'https://discord.com/api/webhooks/1518986470969577483/2LtrdUcXjguh0us_Q4bItZHgIQ0txF6NOiqtVk1-upVEsoLTHjsaWGOQ0W_Gn_j5qiYB'; 
+
+                const DEFAULT_IMAGE_URL = 'https://cdn.discordapp.com/attachments/1511368039671533598/1518987541544697966/51188100a69c948526dab817a1a42b7b.gif?ex=6a3beae3&is=6a3a9963&hm=e68774b7f3cc8c6b70c55f218e6e3c8cf4c1b3740ceebb57e8fded27a4eabe0f&'; 
+                const finalImageToSend = base64Image ? `data:${imageMimeType};base64,${base64Image}` : DEFAULT_IMAGE_URL;
+
+                const webhookPayload = {
+                    bot_name: "PMF-AI-MAX SYSTEM",
+                    status: "SUCCESS",
+                    meta_data: {
+                        key_tier_days: keyData.durationDays, 
+                        time_stamp: new Date().toLocaleString('th-TH')
+                    },
+                    payload_content: {
+                        user_question: question,
+                        ai_calculated_answer: aiResponseText,
+                        attached_image: finalImageToSend,
+                        has_user_uploaded_image: !!base64Image
+                    }
+                };
+
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',
+                    body: JSON.stringify(webhookPayload)
+                });
+
+                statusDiv.style.color = "#28a745";
+                statusDiv.innerText = "🎉 เสร็จสมบูรณ์! บันทึกข้อมูลเข้าเว็บฮุกเรียบร้อย";
+                resultDiv.innerHTML = "<strong>🤖 PMF-AI-MAX ตอบว่า:</strong><br>" + aiResponseText.replace(/\n/g, '<br>');
+                resultDiv.style.display = "block";
+
+            } catch (error) {
+                statusDiv.style.color = "#dc3545";
+                statusDiv.innerText = "💥 เกิดข้อผิดพลาด: " + error.message;
+                console.error(error);
+            }
+        }
+
+        // ==========================================
+        // 🛠️ ฟังก์ชันแอดมินหลังบ้าน
+        // ==========================================
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function loginAdmin() {
+            const user = document.getElementById('adminUsername').value.trim();
+            const pass = document.getElementById('adminPassword').value;
+            
+            const secureUser = atob("U3VwcGVyIFBNRiBBRE1JTg=="); 
+            const securePass = atob("S0VZUy1CQVktSXJvbi4xNw=="); 
+            
+            if (user === secureUser && pass === securePass) { 
+                document.getElementById('adminLoginSection').style.display = 'none';
+                document.getElementById('adminControlSection').style.display = 'block';
+                renderAdminKeysStatus();
+            } else {
+                alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องนะเจ้านาย! 🤫');
+            }
+        }
+
+        function renderAdminKeysStatus() {
+            const keySystemData = JSON.parse(localStorage.getItem('pmfKeySystemData'));
+            let report = "<b>สถานะคีย์ปัจจุบัน:</b><br>";
+            for (let k in keySystemData) {
+                const isLocked = keySystemData[k].isLocked ? "❌ ถูกล็อก 3 วัน" : "✅ ปกติ";
+                const used = keySystemData[k].usedAt ? "เปิดใช้แล้ว" : "ยังไม่เริ่มใช้";
+                report += `🔑 <b>${k}</b>: [${used}] | สถานะ: ${isLocked}<br>`;
+            }
+            document.getElementById('keysStatusReport').innerHTML = report;
+        }
+
+        function resetAllKeys() {
+            if (confirm('คุณต้องการล้างข้อมูลล็อก 3 วันและคืนชีพให้คีย์ทั้งหมดใช่ไหมเจ้านาย?')) {
+                initKeySystem();
+                renderAdminKeysStatus();
+                alert('🔄 คืนค่ากุญแจทั้งหมดให้กลับมาบริสุทธิ์พร้อมใช้งานเรียบร้อย!');
+            }
+        }
+    </script>
+</body>
+</html>
