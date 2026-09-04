@@ -1,0 +1,58 @@
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:0.92rem;
+    padding:13px 26px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    transition:transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+    letter-spacing:0.01em;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .btn-launch{
+    background:linear-gradient(90deg, var(--violet), var(--cyan));
+    color:#050611;
+    box-shadow:0 0 22px -4px rgba(79,227,208,0.6), 0 6px 0 var(--violet-dim);
+  }
+  .btn-launch:not(:disabled):hover{filter:brightness(1.08);}
+  .btn-launch:not(:disabled):active{box-shadow:0 0 22px -4px rgba(79,227,208,0.6), 0 2px 0 var(--violet-dim);}
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--starlight-dim);
+    border:1px solid rgba(237,239,251,0.2);
+  }
+  .btn-ghost:not(:disabled):hover{border-color:rgba(237,239,251,0.45); color:var(--starlight);}
+
+  .status{
+    text-align:center;
+    margin-top:16px;
+    font-size:0.82rem;
+    color:var(--starlight-dim);
+    min-height:20px;
+    font-family:'Space Grotesk', sans-serif;
+  }
+
+  .error{
+    text-align:center;
+    max-width:340px;
+    margin:14px auto 0;
+    font-size:0.82rem;
+    color:var(--alert);
+    line-height:1.55;
+  }
+
+  /* Flight-log strip */
+  .strip-wrap{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .strip{
+    position:relative;
+    background:linear-gradient(180deg, var(--panel-light), var(--panel));
+    padding:16px 16px 20px;
